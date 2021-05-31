@@ -17,8 +17,31 @@ const Tag = props => {
   )
 }
 const TagsGroup = props => {
-  const { tags, selectedTagsIDs, handleTagPress } = props
+  const { tags, selectedTagsIDs, handleTagPress, wrapItems } = props
   const sortedBySelected = _.orderBy(tags, item => _.includes(selectedTagsIDs, item.id), 'desc')
+  if (wrapItems) {
+    return (
+      <View
+        style={{
+          flexGrow: 0,
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+        }}
+      >
+        { tags.map(item => (
+          <View style={{ margin: 5 }}>
+            <Tag
+              key={item.id}
+              content={item.name}
+              isSelected={_.includes(selectedTagsIDs, item.id)}
+              handleTagPress={() => handleTagPress(item.id)}
+            />
+          </View>
+        ))}
+      </View>
+    )
+  }
   return (
     <FlatList
       horizontal={true}

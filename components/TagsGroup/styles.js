@@ -4,7 +4,7 @@ import Styles from '../../constants/styles'
 
 export default StyleSheet.create({
     tagWrapper: (isSelected) => ({
-        flex: 1,
+        //flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: 14,

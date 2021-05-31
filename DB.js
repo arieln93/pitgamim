@@ -35,9 +35,79 @@ const tags = [
       id: '7',
       name: 'חלומות',
       isSelected: false,
-    }
+    },
+    {
+      id: '8',
+      name: 'test1',
+      isSelected: false,
+    },
+    {
+      id: '81',
+      name: 'test2 hdsj',
+      isSelected: false,
+    },
+    {
+      id: '82',
+      name: 'rarar',
+      isSelected: false,
+    },
+    {
+      id: '83',
+      name: 'some issue',
+      isSelected: false,
+    },
+    {
+      id: '84',
+      name: 'lili',
+      isSelected: false,
+    },
+    {
+      id: '85',
+      name: 'english',
+      isSelected: false,
+    },
+    {
+      id: '86',
+      name: 'phrasess',
+      isSelected: false,
+    },
+    {
+      id: '21',
+      name: '2אהבה',
+      isSelected: false,
+    },
+    {
+      id: '22',
+      name: '2זוגיות',
+      isSelected: false,
+    },
+    {
+      id: '23',
+      name: '2התפתחות',
+      isSelected: false,
+    },
+    {
+      id: '24',
+      name: '2אושר',
+      isSelected: false,
+    },
+    {
+      id: '25',
+      name: '2לימודים',
+      isSelected: false,
+    },
+    {
+      id: '26',
+      name: '2טיולים',
+      isSelected: false,
+    },
+    {
+      id: '27',
+      name: '2חלומות',
+      isSelected: false,
+    },
 ]
-const defaultTagsIDs = ['1', '5', '7']
+const defaultTagsIDs = ['1', '5', '7', '3', '4',]
 const items = [
     {
       id: '1',
@@ -107,14 +177,14 @@ const enhancedItems = _.map(items, item => ({
 
 const getItems = (searchStr) => {
     if (searchStr !== undefined && searchStr.length > 0) {
-        return _.filter(enhancedItems, item => _.includes(item.content, searchStr))
+        return _.filter(enhancedItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr)))
     }
     return enhancedItems
 }
 
 const getTags = (searchStr) => {
     if (searchStr !== undefined && searchStr.length > 0) {
-        return _.filter(tags, tag => _.includes(tag.name, searchStr))
+        return _.filter(tags, tag => _.includes(_.toLower(tag.name), _.toLower(searchStr)))
     }
     return tags
 }

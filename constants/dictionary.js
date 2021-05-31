@@ -25,6 +25,8 @@ export default {
     EXPLORE_SCREEN: {
         TITLE: 'חיפוש',
         HEADER: 'חיפוש לפי נושא',
+        POPULAR_TOPICS: 'נושאים פופולריים',
+        ALL_TOPICS: 'כל הנושאים',
         SEARCH_SECTION: {
             SEARCH_INPUT_PLACEHOLDER: 'חיפוש',
         }

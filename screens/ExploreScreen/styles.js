@@ -5,13 +5,11 @@ import Styles from '../../constants/styles'
 export default {
     searchSection: {
         wrapper: StyleSheet.flatten({
+            padding: 15,
             backgroundColor: Colors.PRIMARY,
         }),
         searchLine: StyleSheet.create({
             wrapper: {
-                padding: 5,
-                paddingLeft: 15,
-                paddingRight: 15,
                 flexDirection: 'row'
             },
             icon: {
@@ -28,9 +26,14 @@ export default {
                 borderBottomColor: Colors.WHITE
             },
         }),
-        collections: StyleSheet.create({
+        results: StyleSheet.create({
             wrapper: {
-                padding: 10,
+                marginTop: 10
+            }
+        }),
+        collection: StyleSheet.create({
+            wrapper: {
+                marginBottom: 5,
                 flexDirection: 'row',
                 justifyContent: 'flex-end'
             },
@@ -39,20 +42,25 @@ export default {
                 color: active ? Colors.WHITE : Colors.PRIMARY_LIGHT,
             })
         }),
-        results: StyleSheet.create({
+        tags: StyleSheet.create({
             wrapper: {
-                padding: 5,
+                maxHeight: 200
             }
         }),
     },
+    popularTopics: StyleSheet.flatten({
+        ...Styles.lightTitle,
+        color: Colors.PRIMARY,
+        marginBottom: 5,
+    }),
+    selectedTags: StyleSheet.flatten({
+        marginBottom: 10,
+    }),
     list: {
         wrapper: StyleSheet.flatten({
             padding: 2,
         }),
     },
-    selectedTags: StyleSheet.flatten({
-        marginBottom: 5,
-    }),
     itemsList: StyleSheet.flatten({
         //padding: 3,
     }),

@@ -32,7 +32,7 @@ export default StyleSheet.create({
         tintColor: isActive ? Colors.PRIMARY : Colors.PRIMARY_LIGHT
     }),
     body: {
-        height: 200,
+        maxHeight: 200,
         justifyContent: 'center',
         alignItems: 'center',
     },

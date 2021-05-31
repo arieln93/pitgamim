@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Text, View, Switch } from 'react-native';
+import { Text, View, Switch, TouchableOpacity } from 'react-native';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 import _ from 'lodash'
 
 import Styles from './styles'
@@ -11,7 +13,10 @@ import Card from '../../components/Card/Card'
 
 
 const HomeScreen = props => {
-  const [dailyPhraseEnabled, setDailyPhraseEnabled] = useState(false)
+  const [dailyPhraseEnabled, setDailyPhraseEnabled] = useState(true)
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [notificationTime, setNotificationTime] = useState(new Date())
+
   const tags = [
     {
       id: '1',
@@ -115,6 +120,10 @@ const HomeScreen = props => {
     ...item,
     tags: _.map(item.tags, tagID => _.find(tags, { 'id': tagID }))
   }))
+  const padTimeString = (time) => {
+    const pad = "00" + time
+    return pad.substring(pad.length-2, pad.length)
+  }
   return (
     <Screen.Screen>
       <Screen.Header title={Dictionary.HOME_SCREEN.HEADER} />
@@ -138,11 +147,21 @@ const HomeScreen = props => {
             </View>
             <Text style={Styles.timer.rightSide.contentText}>{Dictionary.HOME_SCREEN.TIMER.CONTENT}</Text>
           </View>
-          <View style={Styles.timer.leftSide.wrapper}>
-            <Text style={Styles.timer.leftSide.digitsText}>00</Text>
-            <Text style={Styles.timer.leftSide.colon}>:</Text>
-            <Text style={Styles.timer.leftSide.digitsText}>00</Text>
-          </View>
+          
+          <TouchableOpacity style={Styles.timer.leftSide.wrapper} onPress={() => setDatePickerVisibility(true)}>
+              <Text style={Styles.timer.leftSide.digitsText}>{padTimeString(notificationTime.getHours())}</Text>
+              <Text style={Styles.timer.leftSide.colon}>:</Text>
+              <Text style={Styles.timer.leftSide.digitsText}>{padTimeString(notificationTime.getMinutes().toString())}</Text>
+          </TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="time"
+            onConfirm={(selectedDate) => {
+              setNotificationTime(selectedDate)
+              setDatePickerVisibility(false)
+            }}
+            onCancel={() => setDatePickerVisibility(false)}
+          />
           
         </View>
         <View style={Styles.random}>
