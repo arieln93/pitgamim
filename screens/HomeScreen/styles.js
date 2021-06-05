@@ -21,7 +21,7 @@ export default {
         wrapper: StyleSheet.flatten({
             padding: 5,
             flexDirection: 'row',
-            height: '18%',
+            height: '20%',
             backgroundColor: Colors.WHITE,
             alignContent: 'space-between'
         }),
@@ -72,7 +72,7 @@ export default {
         })
     },   
     random: StyleSheet.flatten({
-        height: '57%',
+        height: '55%',
         justifyContent: 'center',
     }),
 }

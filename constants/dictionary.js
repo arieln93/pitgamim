@@ -22,7 +22,7 @@ export default {
         SENTENCE: 'פתגם הינו אמרה קצרה המביעה חכמת חיים.\nבואו להחכים איתנו!',
         TIMER: {
             TITLE: 'ִּפִּתְגָּם יוֹמִי',
-            CONTENT: 'תזמון פתגם ליום, מתי שנוח לכם, מהנושאים שאתם אוהבים.',
+            CONTENT: 'קבלת פתגם מעניין לחלון ההודעות בכל יום, בשעה הנוחה לכם.',
         },
         RANDOM_ITEM: {
             TITLE: 'פִּתְגָּם אַקְרָאִי',
@@ -40,7 +40,7 @@ export default {
     },
     EXPORT_SCREEN: {
         NAME: 'export',
-        TITLE: 'תמונה',
+        TITLE: 'יצירה',
         HEADER: 'שתף פתגם',
         SHARING_SENTENCE: {
             PHRASE: 'ידע הוא כוח',

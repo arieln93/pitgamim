@@ -9,6 +9,7 @@ export default {
             backgroundColor: Colors.SECONDARY,
         },
         header: {
+            
         },
         body: {
             flex: 1,

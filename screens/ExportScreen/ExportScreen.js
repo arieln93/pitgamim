@@ -1,25 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Text, View, ScrollView, Button, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { Text, View, ScrollView, FlatList, Button, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import Slider from '@react-native-community/slider';
 import * as ImagePicker from 'expo-image-picker';
 
-import { Surface, Node } from 'gl-react-expo';
-import ImageFilters from 'react-native-gl-image-filters';
 import ViewShot from "react-native-view-shot";
-import GLImage from "gl-react-image";
 import * as Sharing from 'expo-sharing';
 import _ from 'lodash'
-
-import {
-  Grayscale,
-  Sepia,
-  Tint,
-  ColorMatrix,
-  concatColorMatrices,
-  invert,
-  contrast,
-  saturate,
-} from 'react-native-color-matrix-image-filters'
 
 import Styles from './styles'
 import Dictionary from '../../constants/dictionary'
@@ -28,8 +14,8 @@ import Icons from '../../icons/icons'
 
 import * as DB from '../../DB'
 import * as Screen from '../Screen'
-import colors from '../../constants/colors';
-import icons from '../../icons/icons';
+
+import Loading from '../../components/Loading/Loading'
 
 const FilterButton = props => {
   const { icon, handleClick } = props
@@ -90,17 +76,21 @@ const ColorFilter = props => {
 const FontsFilter = props => {
   const { value, options, onChange } = props
   return (
-    <View style={Styles.fontsFilter.wrapper}>
-      { options.map(option => (
+    <FlatList
+      inverted={true}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      data={options}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item }) => (
         <TouchableOpacity
-          key={option}
-          style={Styles.fontsFilter.option.wrapper(option === value)}
-          onPress={() => onChange(option)}
+          style={Styles.fontsFilter.option.wrapper(item === value)}
+          onPress={() => onChange(item)}
         >
-          <Text style={[Styles.fontsFilter.option.text(option === value), { fontFamily: option }]}>אבג</Text>
+          <Text style={[Styles.fontsFilter.option.text(item === value), { fontFamily: item }]}>אבג</Text>
         </TouchableOpacity>
-      ))}
-    </View>
+      )}
+    />
   )
 }
 
@@ -154,8 +144,8 @@ const ExportScreen = ({ navigation, route }) => {
       options: ['Heebo-SemiBold', 'AmaticSC-Bold', 'SecularOne-Regular', 'Heebo-Regular', 'Rubik-Regular', 'Tinos-Regular', 'VarelaRound-Regular']
     }
   })
-  const [item, setItem] = useState(route?.params?.item ? route.params.item : DB.getRandomItem())
-  const [image, setImage] = useState(item.image)
+  const [item, setItem] = useState(undefined)
+  const [image, setImage] = useState()
   const [filters, setFilters] = useState(getInitialFilters())
   const [currentFilter, setCurrentFilter] = useState(null)
   const shot = useRef(null)
@@ -198,7 +188,7 @@ const ExportScreen = ({ navigation, route }) => {
       case 'border':
         return (
           <ScrollView style={Styles.filtersGroup}>
-            <Filter title={filters.borderWidth.title}>
+            <Filter key="borderWidth" title={filters.borderWidth.title}>
               <SliderFilter
                 {...filters.borderWidth}
                 onChange={value => setFilters({
@@ -210,7 +200,7 @@ const ExportScreen = ({ navigation, route }) => {
                 })}
               />
             </Filter>
-            <Filter title={filters.borderColor.title}>
+            <Filter key="borderColor" title={filters.borderColor.title}>
               <ColorFilter
                 {...filters.borderColor}
                 onChange={value => setFilters({
@@ -227,7 +217,7 @@ const ExportScreen = ({ navigation, route }) => {
       case 'font':
         return (
           <ScrollView style={Styles.filtersGroup}>
-            <Filter title={filters.fontSize.title}>
+            <Filter key="fontSize" title={filters.fontSize.title}>
               <SliderFilter
                 {...filters.fontSize}
                 onChange={value => setFilters({
@@ -239,7 +229,7 @@ const ExportScreen = ({ navigation, route }) => {
                 })}
               />
             </Filter>
-            <Filter title={filters.fontColor.title}>
+            <Filter key="fontColor" title={filters.fontColor.title}>
               <ColorFilter
                 {...filters.fontColor}
                 onChange={value => setFilters({
@@ -251,7 +241,7 @@ const ExportScreen = ({ navigation, route }) => {
                 })}
               />
             </Filter>
-            <Filter title={filters.fontStyle.title}>
+            <Filter key="fontStyle" title={filters.fontStyle.title}>
               <FontsFilter
                 {...filters.fontStyle}
                 onChange={value => setFilters({
@@ -268,12 +258,19 @@ const ExportScreen = ({ navigation, route }) => {
     }
   }
   useEffect(() => {
-    setItem(route?.params?.item ? route.params.item : DB.getRandomItem())
+    if(route?.params?.item) {
+      setItem(route.params.item)
+    } else {
+      DB.getRandomItem().then(item => setItem(item))
+    }
   }, [route])
 
   useEffect(() => {
-    setImage(item.image)
-    setFilters(getInitialFilters())
+    if (item) {
+      setImage(item.image)
+      setFilters(getInitialFilters())
+      setCurrentFilter(null)
+    }
   }, [item])
 
   const exportImage =  () => {
@@ -304,111 +301,112 @@ const ExportScreen = ({ navigation, route }) => {
     <Screen.Screen>
       <Screen.Header title={Dictionary.EXPORT_SCREEN.HEADER} />
       <Screen.Body>
-        <View style={{ marginBottom: 20 }}>
-          <ViewShot
-            ref={shot}
-            options={{
-              format: 'png',
-              quality: 1.0
-            }}
+        { item ? <>
+    <View style={{ marginBottom: 20 }}>
+      <ViewShot
+        ref={shot}
+        options={{
+          format: 'png',
+          quality: 1.0
+        }}
+        style={{
+          backgroundColor: 'white',
+        }}>
+        <View
+          style={{
+            width: '100%',
+            height: 300,
+            borderWidth: filters.borderWidth.value,
+            borderColor: `rgb(${filters.borderColor.value},${filters.borderColor.value},${filters.borderColor.value})`,
+            flexDirection: 'column'
+          }}>
+          <Image
+            source={{ uri: image}}
+            blurRadius={filters.blur.value}
             style={{
-              backgroundColor: 'white',
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              opacity: filters.opacity.value,
+            }}
+            resizeMode="cover"
+          />
+          <View
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+          <Text
+            style={{
+              padding: 5,
+              fontFamily: filters.fontStyle.value,
+              fontSize: filters.fontSize.value,
+              color: `rgb(${filters.fontColor.value},${filters.fontColor.value},${filters.fontColor.value})`,
+              textAlign: 'center'
             }}>
+              {item.content}
+            </Text>
+          </View>
+        </View>
+      </ViewShot>
+    </View>
+    { currentFilter !== null
+      ? (
+          <>
+            {renderFilter()}
             <View
               style={{
-                width: '100%',
-                height: 300,
-                borderWidth: filters.borderWidth.value,
-                borderColor: `rgb(${filters.borderColor.value},${filters.borderColor.value},${filters.borderColor.value})`,
-                flexDirection: 'column'
-              }}>
-              <Image
-                source={{ uri: image}}
-                blurRadius={filters.blur.value}
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setCurrentFilter(null)}
                 style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  opacity: filters.opacity.value,
-                }}
-                resizeMode="cover"
-              />
-              <View
-                style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-              <Text
-                style={{
-                  padding: 5,
-                  fontFamily: filters.fontStyle.value,
-                  fontSize: filters.fontSize.value,
-                  color: `rgb(${filters.fontColor.value},${filters.fontColor.value},${filters.fontColor.value})`,
-                  textAlign: 'center'
+                  margin: 5
                 }}>
-                  "{item.content}"
-                </Text>
-              </View>
-            </View>
-          </ViewShot>
-        </View>
-        
-        { currentFilter !== null
-          ? (
-              <>
-                {renderFilter()}
-                <View
+                <Image
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
+                    tintColor: Colors.PRIMARY,
+                    width: 20,
+                    height: 20,
                   }}
-                >
-                  <TouchableOpacity
-                    onPress={() => setCurrentFilter(null)}
-                    style={{
-                      margin: 5
-                    }}>
-                    <Image
-                      style={{
-                        tintColor: Colors.PRIMARY,
-                        width: 20,
-                        height: 20,
-                      }}
-                      source={Icons.exit}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </>
-            )
-          : (
-              <>
-                <View style={Styles.filtersSection}>
-                  <FilterButton icon={Icons.brightness} handleClick={() => setCurrentFilter('opacity')} />
-                  <FilterButton icon={Icons.blur} handleClick={() => setCurrentFilter('blur')} />
-                  <FilterButton icon={Icons.border} handleClick={() => setCurrentFilter('border')} />
-                  <FilterButton icon={Icons.textSize} handleClick={() => setCurrentFilter('font')} />
-                  <FilterButton icon={Icons.addImage} handleClick={pickImage} isSelected={false} />
-                </View>
-                <View style={Styles.exportSection.wrapper}>
-                  <View style={Styles.exportSection.sharingSentence.wrapper}>
-                    <Text style={Styles.exportSection.sharingSentence.phrase}>"{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.PHRASE}"</Text>
-                    <Text style={Styles.exportSection.sharingSentence.source}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.SOURCE}</Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={exportImage}
-                    style={Styles.exportSection.exportButton.wrapper}>
-                    <Image
-                      style={Styles.exportSection.exportButton.icon}
-                      source={Icons.export}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </>
-          )}
+                  source={Icons.exit}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        )
+      : (
+          <>
+            <View style={Styles.filtersSection}>
+              <FilterButton icon={Icons.brightness} handleClick={() => setCurrentFilter('opacity')} />
+              <FilterButton icon={Icons.blur} handleClick={() => setCurrentFilter('blur')} />
+              <FilterButton icon={Icons.border} handleClick={() => setCurrentFilter('border')} />
+              <FilterButton icon={Icons.textSize} handleClick={() => setCurrentFilter('font')} />
+              <FilterButton icon={Icons.addImage} handleClick={pickImage} isSelected={false} />
+            </View>
+            <View style={Styles.exportSection.wrapper}>
+              <View style={Styles.exportSection.sharingSentence.wrapper}>
+                <Text style={Styles.exportSection.sharingSentence.phrase}>"{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.PHRASE}"</Text>
+                <Text style={Styles.exportSection.sharingSentence.source}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.SOURCE}</Text>
+              </View>
+              <TouchableOpacity
+                onPress={exportImage}
+                style={Styles.exportSection.exportButton.wrapper}>
+                <Image
+                  style={Styles.exportSection.exportButton.icon}
+                  source={Icons.export}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+      )}
+    </> : <Loading />}
       </Screen.Body>
     </Screen.Screen>
   )

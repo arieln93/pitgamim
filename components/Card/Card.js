@@ -1,21 +1,25 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Text, View, TouchableOpacity, Animated, Image, ImageBackground, ScrollView } from 'react-native'
 import _ from 'lodash'
 
 import isDefinedAndNotEmpty from '../../utils'
 import Dictionary from '../../constants/dictionary'
+import Colors from '../../constants/colors'
+import Icons from '../../icons/icons'
 import Styles from './styles'
 
 import Loading from '../Loading/Loading'
-
-const favoriteIcon = require('../../icons/favorite.png')
-const shareIcon = require('../../icons/share.png')
-const infoIcon = require('../../icons/info.png')
+import Popup from '../Popup/Popup'
 
 const Card = props => {
-  const { item, navigation, customHeader } = props
+  const { item, navigation, customHeader, handleRefresh } = props
   const [showInfo, setShowInfo] = useState(false)
   const [isLoadingImage, setIsLoadingImage] = useState(true)
+  const [popupContent, setPopupContent] = useState(null)
+  useEffect(() => {
+    setShowInfo(false)
+    //setIsLoadingImage(true)
+  }, [item])
   const heightAnim = useRef(new Animated.Value(200)).current;
   const imageOpacityAnim = useRef(new Animated.Value(0.3)).current;
   const fadeOutAnim = useRef(new Animated.Value(1)).current;
@@ -77,21 +81,29 @@ const Card = props => {
     + (isDefinedAndNotEmpty(item.source) ? (Dictionary.CARD.SOURCE + ': ' + item.source + '\n') : '')
     + (isDefinedAndNotEmpty(item.example) ? (Dictionary.CARD.EXAMPLE + ': ' + item.example) : '' )
   const cardHeader = customHeader
-    ? <Text style={Styles.customHeaderText} numberOfLines={1}>{customHeader}</Text>
+    ? <TouchableOpacity style={Styles.customHeaderWrapper} onPress={handleRefresh}>
+        <Text style={Styles.customHeaderText} numberOfLines={1}>
+          {customHeader}
+        </Text>
+        <View style={{ marginLeft: 5 }}>
+          <Image style={[Styles.headerIcon(true), { tintColor: Colors.PRIMARY }]} source={Icons.refresh} />
+        </View>
+      </TouchableOpacity>
     : <Text style={Styles.headerText} numberOfLines={1}>{Dictionary.CARD.TYPE[item.type]} | {tagNamesString}</Text>
   return (
     <View style={Styles.box}>
+      <Popup {...popupContent} />
       <View style={Styles.header}>
-        <TouchableOpacity>
-          <Image style={Styles.headerIcon(item.isFavorite)} source={favoriteIcon} />
+        <TouchableOpacity onPress={() => setPopupContent({content: "פתגם נשמר למועדפים", timeStamp: Date() })}>
+          <Image style={Styles.headerIcon(item.isFavorite)} source={Icons.favorite} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {
           navigation.jumpTo(Dictionary.EXPORT_SCREEN.NAME, { item })
         }}>
-          <Image style={Styles.headerIcon(false)} source={shareIcon} />
+          <Image style={Styles.headerIcon(false)} source={Icons.share} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleShowInfo}>
-          <Image style={Styles.headerIcon(showInfo)} source={infoIcon} />
+          <Image style={Styles.headerIcon(showInfo)} source={Icons.info} />
         </TouchableOpacity>
         {cardHeader}
       </View>

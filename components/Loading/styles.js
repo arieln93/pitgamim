@@ -4,6 +4,7 @@ import Styles from '../../constants/styles'
 
 export default StyleSheet.create({
     wrapper: {
-        margin: 20
+        justifyContent: 'center',
+        flex: 1
     },
 })

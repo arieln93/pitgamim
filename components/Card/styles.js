@@ -21,6 +21,12 @@ export default StyleSheet.create({
         paddingLeft: 10,
         color: Colors.PRIMARY
     },
+    customHeaderWrapper: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
     customHeaderText: {
         ...Styles.secondaryTitle,
         flex: 1,

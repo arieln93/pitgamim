@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Image } from 'react-native';
+import { Text, View, ScrollView, Image } from 'react-native';
 import _ from 'lodash'
 
 import Styles from './styles'
@@ -13,10 +13,10 @@ const AboutScreen = ({ navigation, route }) => {
     <Screen.Screen>
       <Screen.Header title={Dictionary.ABOUT_SCREEN.HEADER} />
         <Screen.Body>
-          <View style={Styles.wrapper}>
+          <ScrollView style={Styles.wrapper}>
             <Text style={Styles.title}>{Dictionary.ABOUT_SCREEN.PAGE_TITLE}</Text>
             <Text style={Styles.content}>{Dictionary.ABOUT_SCREEN.PAGE_CONTENT}</Text>
-          </View>
+          </ScrollView>
           <View style={Styles.contactUs.wrapper}>
             <Text style={Styles.contactUs.title}>{Dictionary.ABOUT_SCREEN.CONTACT_US}</Text>
             <View style={Styles.contactUs.buttons.wrapper}>

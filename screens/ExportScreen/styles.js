@@ -77,7 +77,7 @@ export default {
         },
     }),
     filtersGroup: StyleSheet.flatten({
-        marginBottom: 20
+        marginBottom: 20,
     }),
     exportSection: {
         wrapper: StyleSheet.flatten({

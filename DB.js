@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import _ from 'lodash'
 
 const tags = [
@@ -186,16 +188,24 @@ const getItems = (searchStr) => {
 }
 
 const getRandomItem = () => {
-    const rand = Math.floor(Math.random() * enhancedItems.length)
-    return enhancedItems[rand]
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const rand = Math.floor(Math.random() * enhancedItems.length)
+      resolve(enhancedItems[rand])
+    }, 2000)
+  })
 }
 
 const getFavoriteItems = (searchStr) => {
-  const favoriteItems = _.filter(enhancedItems, item => item.isFavorite)
-    if (searchStr !== undefined && searchStr.length > 0) {
-        return _.filter(favoriteItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr)))
-    }
-    return favoriteItems
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const favoriteItems = _.filter(enhancedItems, item => item.isFavorite)
+        if (searchStr !== undefined && searchStr.length > 0) {
+            resolve(_.filter(favoriteItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr))))
+        }
+      resolve(favoriteItems)
+    }, 1000)
+  })
 }
 
 const getTags = (searchStr) => {
@@ -209,10 +219,20 @@ const getDefaultTagsIDs = () => {
     return defaultTagsIDs
 }
 
+const write = (data) => {
+    console.log('write to local storage')
+    const dataStringified = JSON.stringify(data)
+    return AsyncStorage.setItem('myGoals', dataStringified)
+}
+const read = () => {
+    console.log('read from local storage')
+    return AsyncStorage.getItem('myGoals')
+}
+
 export {
     getItems,
     getTags,
     getDefaultTagsIDs,
     getRandomItem,
-    getFavoriteItems
+    getFavoriteItems,
 }
