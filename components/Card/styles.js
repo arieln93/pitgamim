@@ -6,7 +6,7 @@ export default StyleSheet.create({
     box: {
         flexDirection: 'column',
         backgroundColor: Colors.WHITE,
-        height: 300,
+        height: 245,
     },
     header: {
         height: 45,
@@ -16,13 +16,15 @@ export default StyleSheet.create({
         padding: 5
     },
     headerText: {
-        flex: 1,
         ...Styles.metadata,
-        fontWeight: 'bold',
+        flex: 1,
+        paddingLeft: 10,
         color: Colors.PRIMARY
     },
     customHeaderText: {
         ...Styles.secondaryTitle,
+        flex: 1,
+        paddingLeft: 10,
         color: Colors.PRIMARY
     },
     headerIcon: (isActive) => ({
@@ -41,13 +43,7 @@ export default StyleSheet.create({
     },
     bodyText: {
         ...Styles.secondaryTitle,
+        textAlign: 'center',
         color: Colors.BLACK,
     },
-    footer: {
-        height: 55,
-    },
-    footerText: {
-        ...Styles.content,
-        padding: 5,
-    }
 })

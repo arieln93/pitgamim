@@ -62,6 +62,6 @@ export default {
         }),
     },
     itemsList: StyleSheet.flatten({
-        //padding: 3,
+        flex: 1,
     }),
 }

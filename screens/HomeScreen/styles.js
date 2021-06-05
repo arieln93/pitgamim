@@ -25,7 +25,7 @@ export default {
             backgroundColor: Colors.WHITE,
             alignContent: 'space-between'
         }),
-        leftSide: StyleSheet.create({
+        rightSide: StyleSheet.create({
             wrapper: {
                 padding: 10,
                 flexDirection: 'row',
@@ -45,7 +45,7 @@ export default {
                 backgroundColor: Colors.SECONDARY_LIGHT,
             },
         }),
-        rightSide: StyleSheet.create({
+        leftSide: StyleSheet.create({
             wrapper: {
                 flex: 1,
                 flexDirection: 'column',

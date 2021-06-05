@@ -30,9 +30,8 @@ const TagsGroup = props => {
         }}
       >
         { tags.map(item => (
-          <View style={{ margin: 5 }}>
+          <View key={item.id} style={{ margin: 5 }}>
             <Tag
-              key={item.id}
               content={item.name}
               isSelected={_.includes(selectedTagsIDs, item.id)}
               handleTagPress={() => handleTagPress(item.id)}

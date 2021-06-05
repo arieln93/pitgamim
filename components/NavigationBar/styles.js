@@ -12,8 +12,8 @@ export default StyleSheet.create({
         tintColor: focused ? Colors.PRIMARY : Colors.PRIMARY
     }),
     title: focused => ({
+        fontFamily: focused ? 'Heebo-SemiBold' : 'Heebo-Regular',
         fontSize: 12,
-        fontWeight: focused ? '700' : '600',
         color: focused ? Colors.PRIMARY : Colors.GRAY
     })
 })

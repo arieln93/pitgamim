@@ -116,7 +116,6 @@ const items = [
       image: 'https://images.unsplash.com/photo-1416339306562-f3d12fefd36f',
       content: 'איזהו גבור? - הכובש את יצרו',
       explanation: 'מיהו גיבור? – אדם שיודע להתאפק ולרסן את יצריו.',
-      source: 'מסכת אבות, ד פסוק א ',
       example: 'למשל מי שיודע לשבת וללמוד ללא דחיינות  הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא כבש את יצריו',
     },
     {
@@ -128,6 +127,7 @@ const items = [
       explanation: '',
       source: "צ'ארלי צ'פלין",
       example: '',
+      isFavorite: true
     },
     {
       id: '3',
@@ -138,6 +138,7 @@ const items = [
       explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
       source: 'אבות, א פסוק יג',
       example: '',
+      isFavorite: true
     },
     {
       id: '12',
@@ -158,6 +159,7 @@ const items = [
       explanation: '',
       source: "צ'ארלי צ'פלין",
       example: '',
+      isFavorite: true
     },
     {
       id: '32',
@@ -168,6 +170,7 @@ const items = [
       explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
       source: 'אבות, א פסוק יג',
       example: '',
+      isFavorite: true
     }
 ]
 const enhancedItems = _.map(items, item => ({
@@ -180,6 +183,19 @@ const getItems = (searchStr) => {
         return _.filter(enhancedItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr)))
     }
     return enhancedItems
+}
+
+const getRandomItem = () => {
+    const rand = Math.floor(Math.random() * enhancedItems.length)
+    return enhancedItems[rand]
+}
+
+const getFavoriteItems = (searchStr) => {
+  const favoriteItems = _.filter(enhancedItems, item => item.isFavorite)
+    if (searchStr !== undefined && searchStr.length > 0) {
+        return _.filter(favoriteItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr)))
+    }
+    return favoriteItems
 }
 
 const getTags = (searchStr) => {
@@ -196,5 +212,7 @@ const getDefaultTagsIDs = () => {
 export {
     getItems,
     getTags,
-    getDefaultTagsIDs
+    getDefaultTagsIDs,
+    getRandomItem,
+    getFavoriteItems
 }

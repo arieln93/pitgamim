@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, TextInput, Image, Text, TouchableOpacity } from 'react-native';
+import { View, Keyboard, ScrollView, Animated, TextInput, Image, Text, TouchableOpacity } from 'react-native';
 import Collapsible from 'react-native-collapsible'
 import _ from 'lodash'
 
@@ -13,17 +13,33 @@ import CardsList from '../../components/CardsList/CardsList'
 
 const searchIcon = require('../../icons/search.png')
 const exitIcon = require('../../icons/exit.png')
-const ExploreScreen = () => {
+
+const ExploreScreen = ({ navigation, route }) => {
   const [viewSearchSuggestions, setViewSearchSuggestions] = useState(false)
   const [tags, setTags] = useState(DB.getTags())
   const [userSelectedTagsIDs, setUserSelectedTagsIDs] = useState([])
   const [selectedTagsIDs, setSelectedTagsIDs] = useState([])
   const [items, setItems] = useState(null)
   const inputRef = useRef(null);
+  const cardsListRef = useRef(null);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
+  const fadeInItemsList = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true
+    }).start();
+  };
+  const fadeOutItemsList = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true
+    }).start();
+  };
 
   const handleTagPress = (tagID) => {
-    console.log('p1')
     if (_.includes(userSelectedTagsIDs, tagID)) {
       const updatedTags = _.filter(userSelectedTagsIDs, id => id !== tagID)
       console.log('updatedTags', updatedTags)
@@ -33,8 +49,14 @@ const ExploreScreen = () => {
     }
   }
 
+  const onFinishSearching = () => {
+    setViewSearchSuggestions(false)
+    inputRef.current && inputRef.current.blur()
+    inputRef.current && inputRef.current.clear()
+    setTags(DB.getTags())
+  }
+
   useEffect(() => {
-    console.log('e1', userSelectedTagsIDs.length)
     if (userSelectedTagsIDs.length === 0){
       setSelectedTagsIDs(DB.getDefaultTagsIDs())
     } else {
@@ -43,14 +65,27 @@ const ExploreScreen = () => {
   }, [userSelectedTagsIDs])
 
   useEffect(() => {
-    console.log('e2', selectedTagsIDs.length)
     if (selectedTagsIDs.length > 0) {
       const allItems = DB.getItems()
       const updatedItems = _.filter(allItems, item => _.size(_.intersection(selectedTagsIDs, item.tags)) > 0)
       console.log(selectedTagsIDs, updatedItems.length)
       setItems(updatedItems)
     }
+    cardsListRef.current.scrollToOffset(0)
   }, [selectedTagsIDs])
+
+  useEffect(() => {
+    if (viewSearchSuggestions) {
+      fadeOutItemsList()
+    } else {
+      fadeInItemsList()
+      cardsListRef.current.scrollToOffset(0)
+    }
+  }, [viewSearchSuggestions])
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidHide', onFinishSearching)
+  }, [])
 
   return (
     <Screen.Screen>
@@ -66,18 +101,15 @@ const ExploreScreen = () => {
                 console.log('text is', value)
                 setTags(DB.getTags(value))
               }}
-              onFocus={() => setViewSearchSuggestions(true)}
+              onFocus={() => !viewSearchSuggestions && setViewSearchSuggestions(true)}
             />
             { viewSearchSuggestions
-              ? <TouchableOpacity onPress={() => {
-                  setViewSearchSuggestions(false)
-                  inputRef.current.blur()
-                  inputRef.current.clear()
-                  setTags(DB.getTags())
-                }}>
+              ? <TouchableOpacity onPress={onFinishSearching}>
                   <Image style={Styles.searchSection.searchLine.icon} source={exitIcon} />
                 </TouchableOpacity>
-              : <Image style={Styles.searchSection.searchLine.icon} source={searchIcon} />
+              : <TouchableOpacity onPress={() => !viewSearchSuggestions && setViewSearchSuggestions(true)}>
+                  <Image style={Styles.searchSection.searchLine.icon} source={searchIcon} />
+                </TouchableOpacity>
             }
           </View>
           <Collapsible collapsed={!viewSearchSuggestions}>
@@ -102,19 +134,23 @@ const ExploreScreen = () => {
         </View>
       </Screen.Header>
       <Screen.Body>
-        { !viewSearchSuggestions &&  userSelectedTagsIDs.length === 0 && <Text style={Styles.popularTopics}>{Dictionary.EXPLORE_SCREEN.POPULAR_TOPICS}</Text> }
-        { !viewSearchSuggestions && 
-          <View style={Styles.selectedTags}>
-            <TagsGroup
-              tags={_.filter(tags, tag => _.includes(selectedTagsIDs, tag.id))}
-              selectedTagsIDs={userSelectedTagsIDs}
-              handleTagPress={handleTagPress}
-            />
-          </View>
+        { userSelectedTagsIDs.length === 0 &&
+          <Animated.Text style={[Styles.popularTopics, { opacity: fadeAnim }]}>{Dictionary.EXPLORE_SCREEN.POPULAR_TOPICS}</Animated.Text>
         }
-        <View style={Styles.itemsList}>
-          <CardsList items={items} />
-        </View>
+        <Animated.View style={[Styles.selectedTags, { opacity: fadeAnim }]}>
+          <TagsGroup
+            tags={_.filter(tags, tag => _.includes(selectedTagsIDs, tag.id))}
+            selectedTagsIDs={userSelectedTagsIDs}
+            handleTagPress={handleTagPress}
+          />
+        </Animated.View>
+        <Animated.View style={[Styles.itemsList, { opacity: fadeAnim }]}>
+          <CardsList
+            ref={cardsListRef}
+            items={items}
+            navigation={navigation}
+          />
+        </Animated.View>
       </Screen.Body>
     </Screen.Screen>
   );

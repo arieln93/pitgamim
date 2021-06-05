@@ -3,46 +3,50 @@ import Colors from '../../constants/colors'
 import Styles from '../../constants/styles'
 
 export default {
-    searchSection: {
+    wrapper: StyleSheet.flatten({
+        padding: 10
+    }),
+    title: StyleSheet.flatten({
+        ...Styles.mainTitle,
+        color: Colors.PRIMARY
+    }),
+    content: StyleSheet.flatten({
+        ...Styles.content,
+        color: Colors.PRIMARY
+    }),
+    contactUs: {
         wrapper: StyleSheet.flatten({
-            backgroundColor: Colors.PRIMARY,
+            padding: 10,
+            flexDirection: 'column',
+            alignItems: 'center',
         }),
-        searchLine: StyleSheet.create({
-            wrapper: {
-                padding: 5,
-                paddingLeft: 15,
-                paddingRight: 15,
-                flexDirection: 'row'
-            },
-            icon: {
-                height: 25,
-                width: 25,
-                tintColor: Colors.PRIMARY_LIGHT
-            },
-            textInput: {
-                ...Styles.content,
-                flex: 1,
-                paddingRight: 5,
-                color: Colors.WHITE,
-                borderBottomWidth: 1,
-                borderBottomColor: Colors.WHITE
-            },
+        title: StyleSheet.flatten({
+            ...Styles.secondaryTitle,
+            color: Colors.PRIMARY
         }),
-        results: StyleSheet.create({
+        buttons: StyleSheet.create({
             wrapper: {
-                padding: 5,
+                flexDirection: 'row',
+            },
+            buttonWrapper: {
+                backgroundColor: Colors.WHITE,
+                shadowColor: Colors.BLACK,
+                shadowOffset: {
+                    width: 1,
+                    height: 1
+                },
+                shadowOpacity: 0.8,
+                shadowRadius: 2,  
+                elevation: 3,
+                borderRadius: 30,
+                margin: 10
+            },
+            buttonIcon: {
+                tintColor: Colors.PRIMARY,
+                width: 50,
+                height: 50,
             }
         }),
-    },
-    list: {
-        wrapper: StyleSheet.flatten({
-            padding: 2,
-        }),
-    },
-    selectedTags: StyleSheet.flatten({
-        marginBottom: 5,
-    }),
-    itemsList: StyleSheet.flatten({
-        //padding: 3,
-    }),
+
+    }
 }
