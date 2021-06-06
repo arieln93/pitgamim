@@ -6,7 +6,6 @@ export default StyleSheet.create({
     box: {
         flexDirection: 'column',
         backgroundColor: Colors.WHITE,
-        height: 245,
     },
     header: {
         height: 45,
@@ -40,7 +39,7 @@ export default StyleSheet.create({
         tintColor: isActive ? Colors.PRIMARY : Colors.PRIMARY_LIGHT
     }),
     body: {
-        maxHeight: 200,
+        height: 200,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -52,4 +51,25 @@ export default StyleSheet.create({
         textAlign: 'center',
         color: Colors.BLACK,
     },
+    bodySourceText: {
+        ...Styles.info,
+    },
+    collapsible: {
+        padding: 10
+    },
+    collapsibleText: {
+        ...Styles.info
+    },
+    collapsibleFooter: {
+        padding: 10,
+        borderTopWidth: 1,
+        borderTopColor: Colors.GRAY,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    collapsibleFooterText: {
+        ...Styles.metadata,
+        color: Colors.PRIMARY
+
+    }
 })

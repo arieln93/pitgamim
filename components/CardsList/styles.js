@@ -6,5 +6,11 @@ export default StyleSheet.create({
     flatList : {
         flexGrow: 0,
         margin: 2,
+    },
+    noDataToDisplay: {
+        ...Styles.lightTitle,
+        color: Colors.PRIMARY,
+        padding: 10,
+        textAlign: 'center',
     }
 })

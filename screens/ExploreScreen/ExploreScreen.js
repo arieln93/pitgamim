@@ -71,15 +71,19 @@ const ExploreScreen = ({ navigation, route }) => {
       console.log(selectedTagsIDs, updatedItems.length)
       setItems(updatedItems)
     }
-    cardsListRef.current.scrollToOffset(0)
   }, [selectedTagsIDs])
+
+  useEffect(() => {
+    if (items?.length){
+      cardsListRef.current.scrollToIndex({ index: 0 })
+    }
+  }, [items])
 
   useEffect(() => {
     if (viewSearchSuggestions) {
       fadeOutItemsList()
     } else {
       fadeInItemsList()
-      cardsListRef.current.scrollToOffset(0)
     }
   }, [viewSearchSuggestions])
 

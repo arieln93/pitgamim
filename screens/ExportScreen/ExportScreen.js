@@ -341,6 +341,7 @@ const ExportScreen = ({ navigation, route }) => {
             }}
           >
           <Text
+            adjustsFontSizeToFit
             style={{
               padding: 5,
               fontFamily: filters.fontStyle.value,

@@ -50,5 +50,12 @@ export default {
         fontSize: 17,
         lineHeight: 25,
         letterSpacing: -0.3,
+    },
+    info: {
+        fontFamily: 'Heebo-Regular',
+        fontStyle: 'normal',
+        fontSize: 14,
+        lineHeight: 25,
+        letterSpacing: -0.3,
     }
 }

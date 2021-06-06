@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Text, View, TouchableOpacity, Animated, Image, ImageBackground, ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, Image, ImageBackground } from 'react-native'
+import Collapsible from 'react-native-collapsible'
+
 import _ from 'lodash'
 
 import isDefinedAndNotEmpty from '../../utils'
@@ -12,7 +14,7 @@ import Loading from '../Loading/Loading'
 import Popup from '../Popup/Popup'
 
 const Card = props => {
-  const { item, navigation, customHeader, handleRefresh } = props
+  const { item, navigation, customHeader, handleRefresh, listRef} = props
   const [showInfo, setShowInfo] = useState(false)
   const [isLoadingImage, setIsLoadingImage] = useState(true)
   const [popupContent, setPopupContent] = useState(null)
@@ -20,66 +22,14 @@ const Card = props => {
     setShowInfo(false)
     //setIsLoadingImage(true)
   }, [item])
-  const heightAnim = useRef(new Animated.Value(200)).current;
-  const imageOpacityAnim = useRef(new Animated.Value(0.3)).current;
-  const fadeOutAnim = useRef(new Animated.Value(1)).current;
-  const fadeInAnim = useRef(new Animated.Value(0)).current;
-  const grow = () => {
-    Animated.timing(heightAnim, {
-      toValue: 255,
-      duration: 300,
-      useNativeDriver: false
-    }).start();
-    Animated.timing(imageOpacityAnim, {
-      toValue: 0.2,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-    Animated.timing(fadeOutAnim, {
-      toValue: 0,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-    Animated.timing(fadeInAnim, {
-      toValue: 1,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-  };
-
-  const shrink = () => {
-    Animated.timing(heightAnim, {
-      toValue: 200,
-      duration: 300,
-       useNativeDriver: false
-    }).start();
-    Animated.timing(imageOpacityAnim, {
-      toValue: 0.4,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-    Animated.timing(fadeOutAnim, {
-      toValue: 1,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-    Animated.timing(fadeInAnim, {
-      toValue: 0,
-      duration: 300,
-       useNativeDriver: true
-    }).start();
-  };
+  
 
   const handleShowInfo = () => {
     setShowInfo(!showInfo)
-    !showInfo && grow()
-    showInfo && shrink()
+    listRef?.current?.scrollToItem({ item })
   }
   const tagNamesString = _.join(item.tagNames, ' | ')
   const sourceInfoString = isDefinedAndNotEmpty(item.source) ? item.source : (Dictionary.CARD.SOURCE + ': ' + 'לא ידוע')
-  const infoString = (isDefinedAndNotEmpty(item.explanation) ? (Dictionary.CARD.EXPLANATION + ': ' + item.explanation + '\n') : '')
-    + (isDefinedAndNotEmpty(item.source) ? (Dictionary.CARD.SOURCE + ': ' + item.source + '\n') : '')
-    + (isDefinedAndNotEmpty(item.example) ? (Dictionary.CARD.EXAMPLE + ': ' + item.example) : '' )
   const cardHeader = customHeader
     ? <TouchableOpacity style={Styles.customHeaderWrapper} onPress={handleRefresh}>
         <Text style={Styles.customHeaderText} numberOfLines={1}>
@@ -108,7 +58,7 @@ const Card = props => {
         {cardHeader}
       </View>
       <TouchableOpacity onPress={handleShowInfo}>
-        <Animated.View style={[Styles.body, { height: heightAnim }]}>
+        <View style={Styles.body}>
           {isLoadingImage && <Loading /> }
           <ImageBackground
             onLoadEnd={() => setIsLoadingImage(false)}
@@ -117,28 +67,46 @@ const Card = props => {
               position: 'absolute',
               width: '100%',
               height: '100%',
-              resizeMode: "cover"
+              resizeMode: "cover",
             }}
             imageStyle={{
               opacity: 0.3
             }}
           >
-            <ScrollView
-              contentContainerStyle={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-                <Text style={Styles.bodyText}>"{item.content}"</Text>
-                { showInfo
-                  ? <Text style={Styles.footerText}>{infoString}</Text>
-                  : <Text style={Styles.footerText}>{sourceInfoString}</Text>
-                }
-            </ScrollView>
+            <View style={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 200,
+            }}>
+            <View>
+              <Text adjustsFontSizeToFit style={Styles.bodyText}>
+                "{item.content}"
+              </Text>
+            </View>
+            <View>
+              <Text adjustsFontSizeToFit numberOfLines={2} style={[Styles.bodySourceText, { maxHeight: 50}]}>
+                {sourceInfoString}
+              </Text>
+            </View>
+            </View>
           </ImageBackground>
-        </Animated.View>
+        </View>
       </TouchableOpacity>
+      <Collapsible collapsed={!showInfo}>
+        <View style={Styles.collapsible}>
+            { isDefinedAndNotEmpty(item.explanation) && <Text style={Styles.collapsibleText}>{Dictionary.CARD.EXPLANATION}: {item.explanation}</Text> }
+            { isDefinedAndNotEmpty(item.source) && <Text style={Styles.collapsibleText}>{Dictionary.CARD.SOURCE}: {item.source}</Text> }
+            { isDefinedAndNotEmpty(item.example) && <Text style={Styles.collapsibleText}>{Dictionary.CARD.EXAMPLE}: {item.example}</Text> }
+        </View>
+        <View style={Styles.collapsibleFooter}>
+          <TouchableOpacity onPress={() => {
+            navigation.jumpTo(Dictionary.EXPORT_SCREEN.NAME, { item })
+          }}>
+            <Text style={Styles.collapsibleFooterText}>שתף פתגם זה</Text>
+          </TouchableOpacity>
+        </View>
+      </Collapsible>
     </View>
   )
 }
