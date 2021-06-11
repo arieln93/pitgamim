@@ -10,6 +10,7 @@ import Styles from './styles'
 import * as Screen from '../Screen'
 import TagsGroup from '../../components/TagsGroup/TagsGroup'
 import CardsList from '../../components/CardsList/CardsList'
+import Loading from '../../components/Loading/Loading'
 
 const searchIcon = require('../../icons/search.png')
 const exitIcon = require('../../icons/exit.png')
@@ -20,6 +21,7 @@ const ExploreScreen = ({ navigation, route }) => {
   const [userSelectedTagsIDs, setUserSelectedTagsIDs] = useState([])
   const [selectedTagsIDs, setSelectedTagsIDs] = useState([])
   const [items, setItems] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef(null);
   const cardsListRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -66,15 +68,17 @@ const ExploreScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (selectedTagsIDs.length > 0) {
-      const allItems = DB.getItems()
-      const updatedItems = _.filter(allItems, item => _.size(_.intersection(selectedTagsIDs, item.tags)) > 0)
-      console.log(selectedTagsIDs, updatedItems.length)
-      setItems(updatedItems)
+      setIsLoading(true)
+      DB.getItemsByTags(selectedTagsIDs)
+      .then(filteredItems => {
+        setItems(filteredItems)
+        setIsLoading(false)
+      })
     }
   }, [selectedTagsIDs])
 
   useEffect(() => {
-    if (items?.length){
+    if (items?.length && !isLoading){
       cardsListRef.current.scrollToIndex({ index: 0 })
     }
   }, [items])
@@ -101,10 +105,7 @@ const ExploreScreen = ({ navigation, route }) => {
               style={Styles.searchSection.searchLine.textInput}
               placeholder={Dictionary.EXPLORE_SCREEN.SEARCH_SECTION.SEARCH_INPUT_PLACEHOLDER}
               placeholderTextColor={Colors.PRIMARY_LIGHT}
-              onChangeText={(value) => {
-                console.log('text is', value)
-                setTags(DB.getTags(value))
-              }}
+              onChangeText={(value) => setTags(DB.getTags(value))}
               onFocus={() => !viewSearchSuggestions && setViewSearchSuggestions(true)}
             />
             { viewSearchSuggestions
@@ -149,11 +150,7 @@ const ExploreScreen = ({ navigation, route }) => {
           />
         </Animated.View>
         <Animated.View style={[Styles.itemsList, { opacity: fadeAnim }]}>
-          <CardsList
-            ref={cardsListRef}
-            items={items}
-            navigation={navigation}
-          />
+          { isLoading ? <Loading /> : <CardsList ref={cardsListRef} items={items} navigation={navigation} /> }
         </Animated.View>
       </Screen.Body>
     </Screen.Screen>

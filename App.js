@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFonts } from "@use-expo/font"
 
 import _ from 'lodash'
 import NavigationBar from './components/NavigationBar/NavigationBar'
 import Loading from './components/Loading/Loading'
-
+import * as DB from './DB'
+import * as Notifications from 'expo-notifications'
 
 const customFonts = {
   "Heebo-Regular" : require("./assets/fonts/Heebo-Regular.ttf"),
@@ -17,12 +18,17 @@ const customFonts = {
   "Tinos-Regular": require("./assets/fonts/Tinos-Regular.ttf"),
   "VarelaRound-Regular": require("./assets/fonts/VarelaRound-Regular.ttf"),
 }
-
 export default function App() {
-  const [isLoaded] = useFonts(customFonts);
-
-  if (!isLoaded) {
-    return <Loading />;
+  const [isFontsLoaded] = useFonts(customFonts);
+  const [isDatabaseLoaded, setIsDatabaseLoaded] = useState(null)
+  const loadDB = async () => {
+    DB.initDB().then(resp => setIsDatabaseLoaded(resp))
   }
-  return  <NavigationBar />
+  useEffect(() => {
+    console.log('App loading')
+    loadDB()
+  }, [])
+
+
+  return !isFontsLoaded || !isDatabaseLoaded ? <Loading /> : <NavigationBar/>
 }

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "261188976824",
+    "firebase_url": "https://pitgamim-29280-default-rtdb.firebaseio.com",
+    "project_id": "pitgamim-29280",
+    "storage_bucket": "pitgamim-29280.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261188976824:android:1757e548ebad4763c9f44d",
+        "android_client_info": {
+          "package_name": "com.pitgamim.pitgamim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "261188976824-n8g36ls9lfm5pbmbknc88fo76bfe2r5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pitgamim.pitgamim",
+            "certificate_hash": "71dc66e630c4520ce59ebba452ce491b55cd4c0c"
+          }
+        },
+        {
+          "client_id": "261188976824-61s4qtfafaf6rsskvu96gjsd4reacsuo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_LWYYRktR1ZwS9uK2X36pHS-DzdR6SDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "261188976824-61s4qtfafaf6rsskvu96gjsd4reacsuo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

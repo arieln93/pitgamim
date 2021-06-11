@@ -37,13 +37,13 @@ export default {
                 color: Colors.BLACK,
                 padding: 2,
             },
-            digitsText: {
+            digitsText: (active) => ({
                 fontSize: 40,
-                color: Colors.BLACK,
+                color: active ? Colors.BLACK : Colors.MEDIUM_GRAY,
                 padding: 5,
                 borderRadius: 10,
                 backgroundColor: Colors.SECONDARY_LIGHT,
-            },
+            }),
         }),
         leftSide: StyleSheet.create({
             wrapper: {
@@ -75,4 +75,29 @@ export default {
         height: '55%',
         justifyContent: 'center',
     }),
+    phraseModal: StyleSheet.create({
+        wrapper: {
+            position: 'absolute',
+            alignSelf: 'center',
+            zIndex: 1,
+            height: '100%',
+            width: '100%',
+            backgroundColor: 'white',
+            shadowColor: 'black',
+            shadowOffset: {
+                width: 1,
+                height: 1
+            },
+            shadowOpacity: 0.8,
+            shadowRadius: 2,  
+            elevation: 3,
+            padding: 10,
+            margin: 5,
+        },
+        content: {
+            ...Styles.content,
+            textAlign: 'center',
+            color: Colors.PRIMARY
+        },
+    })
 }

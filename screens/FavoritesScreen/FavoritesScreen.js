@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import _ from 'lodash'
 import * as DB from '../../DB'
 
 import Styles from './styles'
 import Dictionary from '../../constants/dictionary'
-import TagsGroup from '../../components/TagsGroup/TagsGroup'
 import CardsList from '../../components/CardsList/CardsList'
 import Loading from '../../components/Loading/Loading'
 import * as Screen from '../Screen'
 
-const HomeScreen = ({ navigation, route }) => {
-  const [tags, setTags] = useState(DB.getTags())
+const FavoritesScreen = ({ navigation, route }) => {
   const [items, setItems] = useState(undefined)
+  const loadFavorites = () => DB.getFavoriteItems().then((favoriteItems) => setItems(favoriteItems))
   useEffect(() => {
-    (async () => {
-      DB.getFavoriteItems().then((favoriteItems) => setItems(favoriteItems))
-    })()
+    loadFavorites()
   }, [])
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', e => {
+      loadFavorites()
+    })
+    return unsubscribe;
+  }, [navigation]);
   return (
     <Screen.Screen>
       <Screen.Header title={Dictionary.FAVORITES_SCREEN.HEADER} />
@@ -33,4 +36,4 @@ const HomeScreen = ({ navigation, route }) => {
   )
 }
 
-export default HomeScreen
+export default FavoritesScreen

@@ -21,25 +21,19 @@ export default {
             alignItems: 'center',
         }),
         title: StyleSheet.flatten({
-            ...Styles.secondaryTitle,
+            ...Styles.metadata,
+            fontSize: 17,
             color: Colors.PRIMARY
         }),
         buttons: StyleSheet.create({
             wrapper: {
                 flexDirection: 'row',
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center'
             },
             buttonWrapper: {
-                backgroundColor: Colors.WHITE,
-                shadowColor: Colors.BLACK,
-                shadowOffset: {
-                    width: 1,
-                    height: 1
-                },
-                shadowOpacity: 0.8,
-                shadowRadius: 2,  
-                elevation: 3,
-                borderRadius: 30,
-                margin: 10
+                margin: 5,
             },
             buttonIcon: {
                 tintColor: Colors.PRIMARY,

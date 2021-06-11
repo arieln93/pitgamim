@@ -94,6 +94,31 @@ const FontsFilter = props => {
   )
 }
 
+const BackgroundFilter = props => {
+  const { value, options, onChange, pickImageHandler } = props
+  return (
+    <View
+      style={{
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        justifyContent: 'center',
+      }}
+    >
+      { options.map(option => (
+        <TouchableOpacity
+          key={option}
+          style={Styles.backgroundFilter(option, option === value)}
+          onPress={() => onChange(option)}
+        />
+      ))}
+      <FilterButton
+        icon={Icons.addImage}
+        handleClick={pickImageHandler}
+      />
+    </View>
+  )
+}
+
 const ExportScreen = ({ navigation, route }) => {
   const getInitialFilters = () => ({
     opacity: {
@@ -142,6 +167,11 @@ const ExportScreen = ({ navigation, route }) => {
       title: Dictionary.EXPORT_SCREEN.FILTERS.FONT_STYLE,
       value: 'Heebo-Regular',
       options: ['Heebo-SemiBold', 'AmaticSC-Bold', 'SecularOne-Regular', 'Heebo-Regular', 'Rubik-Regular', 'Tinos-Regular', 'VarelaRound-Regular']
+    },
+    background: {
+      title: Dictionary.EXPORT_SCREEN.FILTERS.BACKGROUND,
+      value: null,
+      options: Colors.BACKGROUND_OPTIONS
     }
   })
   const [item, setItem] = useState(undefined)
@@ -149,8 +179,78 @@ const ExportScreen = ({ navigation, route }) => {
   const [filters, setFilters] = useState(getInitialFilters())
   const [currentFilter, setCurrentFilter] = useState(null)
   const shot = useRef(null)
+  
+  useEffect(() => {
+    if(route?.params?.item) {
+      setItem(route.params.item)
+    } else {
+      DB.getRandomItem().then(item => setItem(item))
+    }
+  }, [route])
+
+  useEffect(() => {
+    if (item) {
+      setImage(item.image)
+      setFilters(getInitialFilters())
+      setCurrentFilter(null)
+    }
+  }, [item])
+
+  const exportImage =  () => {
+    console.log(shot.current)
+    shot.current.capture().then(uri => {
+      Sharing.shareAsync(uri)
+    })
+  }
+  const pickImageHandler = async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('יש לאשר הגדרות מדיה');
+      }
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri)
+      setFilters({
+        ...filters,
+        background: {
+          ...filters.background,
+          value: null
+        }
+      })
+    }
+  }
   const renderFilter = () => {
     switch (currentFilter) {
+      case 'background':
+        return (
+          <ScrollView style={Styles.filtersGroup}>
+            <Filter title={filters.background.title}>
+              <BackgroundFilter
+                {...filters.background}
+                pickImageHandler={pickImageHandler}
+                onChange={value => setFilters({
+                  ...filters,
+                  background: {
+                    ...filters.background,
+                    value
+                  },
+                  opacity: {
+                    ...filters.opacity,
+                    value: 0.6
+                  }
+                })}
+              />
+            </Filter>
+          </ScrollView>
+        )
       case 'opacity':
         return (
           <ScrollView style={Styles.filtersGroup}>
@@ -257,46 +357,6 @@ const ExportScreen = ({ navigation, route }) => {
         )
     }
   }
-  useEffect(() => {
-    if(route?.params?.item) {
-      setItem(route.params.item)
-    } else {
-      DB.getRandomItem().then(item => setItem(item))
-    }
-  }, [route])
-
-  useEffect(() => {
-    if (item) {
-      setImage(item.image)
-      setFilters(getInitialFilters())
-      setCurrentFilter(null)
-    }
-  }, [item])
-
-  const exportImage =  () => {
-    console.log(shot.current)
-    shot.current.capture().then(uri => {
-      Sharing.shareAsync(uri)
-    })
-  }
-  const pickImage = async () => {
-    if (Platform.OS !== 'web') {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        alert('יש לאשר הגדרות מדיה');
-      }
-    }
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  }
   return (
     <Screen.Screen>
       <Screen.Header title={Dictionary.EXPORT_SCREEN.HEADER} />
@@ -320,17 +380,28 @@ const ExportScreen = ({ navigation, route }) => {
             borderColor: `rgb(${filters.borderColor.value},${filters.borderColor.value},${filters.borderColor.value})`,
             flexDirection: 'column'
           }}>
-          <Image
-            source={{ uri: image}}
-            blurRadius={filters.blur.value}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              opacity: filters.opacity.value,
-            }}
-            resizeMode="cover"
-          />
+          { filters.background.value === null
+            ? <Image
+                source={{ uri: image}}
+                blurRadius={filters.blur.value}
+                style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  opacity: filters.opacity.value,
+                }}
+                resizeMode="cover"
+              />
+            : <View
+                style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: filters.background.value,
+                  opacity: filters.opacity.value,
+                }}
+              />
+          }
           <View
             style={{
               position: 'absolute',
@@ -349,7 +420,7 @@ const ExportScreen = ({ navigation, route }) => {
               color: `rgb(${filters.fontColor.value},${filters.fontColor.value},${filters.fontColor.value})`,
               textAlign: 'center'
             }}>
-              {item.content}
+              {item.phrase}
             </Text>
           </View>
         </View>
@@ -385,11 +456,11 @@ const ExportScreen = ({ navigation, route }) => {
       : (
           <>
             <View style={Styles.filtersSection}>
+              <FilterButton icon={Icons.background} handleClick={() => setCurrentFilter('background')} />
+              <FilterButton icon={Icons.border} handleClick={() => setCurrentFilter('border')} />
               <FilterButton icon={Icons.brightness} handleClick={() => setCurrentFilter('opacity')} />
               <FilterButton icon={Icons.blur} handleClick={() => setCurrentFilter('blur')} />
-              <FilterButton icon={Icons.border} handleClick={() => setCurrentFilter('border')} />
               <FilterButton icon={Icons.textSize} handleClick={() => setCurrentFilter('font')} />
-              <FilterButton icon={Icons.addImage} handleClick={pickImage} isSelected={false} />
             </View>
             <View style={Styles.exportSection.wrapper}>
               <View style={Styles.exportSection.sharingSentence.wrapper}>

@@ -1,302 +1,177 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import _ from 'lodash'
+import { createNativeWrapper } from 'react-native-gesture-handler';
 
-const tags = [
-    {
-      id: '1',
-      name: 'אהבה',
-      isSelected: false,
-    },
-    {
-      id: '2',
-      name: 'זוגיות',
-      isSelected: false,
-    },
-    {
-      id: '3',
-      name: 'התפתחות',
-      isSelected: false,
-    },
-    {
-      id: '4',
-      name: 'אושר',
-      isSelected: false,
-    },
-    {
-      id: '5',
-      name: 'לימודים',
-      isSelected: false,
-    },
-    {
-      id: '6',
-      name: 'טיולים',
-      isSelected: false,
-    },
-    {
-      id: '7',
-      name: 'חלומות',
-      isSelected: false,
-    },
-    {
-      id: '8',
-      name: 'test1',
-      isSelected: false,
-    },
-    {
-      id: '81',
-      name: 'test2 hdsj',
-      isSelected: false,
-    },
-    {
-      id: '82',
-      name: 'rarar',
-      isSelected: false,
-    },
-    {
-      id: '83',
-      name: 'some issue',
-      isSelected: false,
-    },
-    {
-      id: '84',
-      name: 'lili',
-      isSelected: false,
-    },
-    {
-      id: '85',
-      name: 'english',
-      isSelected: false,
-    },
-    {
-      id: '86',
-      name: 'phrasess',
-      isSelected: false,
-    },
-    {
-      id: '21',
-      name: '2אהבה',
-      isSelected: false,
-    },
-    {
-      id: '22',
-      name: '2זוגיות',
-      isSelected: false,
-    },
-    {
-      id: '23',
-      name: '2התפתחות',
-      isSelected: false,
-    },
-    {
-      id: '24',
-      name: '2אושר',
-      isSelected: false,
-    },
-    {
-      id: '25',
-      name: '2לימודים',
-      isSelected: false,
-    },
-    {
-      id: '26',
-      name: '2טיולים',
-      isSelected: false,
-    },
-    {
-      id: '27',
-      name: '2חלומות',
-      isSelected: false,
-    },
-]
-const defaultTagsIDs = ['1', '5', '7', '3', '4',]
-const items = [
-    {
-      id: '1',
-      type: 'PHRASE',
-      tags: ['1', '2', '3', '4', '5'],
-      image: 'https://images.unsplash.com/photo-1416339306562-f3d12fefd36f',
-      content: 'התחלה איזהו גבור? - הכובש את יצרו איזהו גבור? - הכובש את יצרו איזהו גבור? - הכובש את יצרו איזהו גבור? - הכובש את יצרו איזהו גבור? - הכובש את יצרו איזהו גבור? - הכובש אhfkds fdshf  כיגדיכל ד כגדיכ לת יצרו איזהו גבור? - הכובש את יצרואיזהו גבור? - הכובש את יצרו סיום',
-      explanation: 'מיהו גיבור? – אדם שיודע להתאפק ולרסן את יצריו.',
-      source: "מקור מאוד ארוך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחגםדך  כגדמלחדג כגמדןכ גדחכלג דחמחגדמכג  כ  כי גד ך ך יךכםגד כחךכםגד כחגםד כג דח סיום ",
-      example: 'למשל מי שיודע לשבת וללמוד ללא דחיינות  הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא כבש את יצריו',
-    },
-    {
-      id: '2',
-      type: 'QUOTE',
-      tags: ['2', '3', '7'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'יום ללא צחוק הוא יום מבוזבז',
-      explanation: '',
-      source: "צ'ארלי צ'פלין",
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '3',
-      type: 'PHRASE',
-      tags: ['6', '2'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'אִם אֵין אֲנִי לִי, מִי לִי? וּכְשֶׁאֲנִי לְעַצְמִי, מָה אֲנִי? וְאִם לֹא עַכְשָׁיו, אֵימָתַי?',
-      explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
-      source: 'אבות, א פסוק יג',
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '12',
-      type: 'PHRASE',
-      tags: ['1', '3', '4'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'איזהו גבור? - הכובש את יצרו',
-      explanation: 'מיהו גיבור? – אדם שיודע להתאפק ולרסן את יצריו.',
-      source: 'מסכת אבות, ד פסוק א ',
-      example: 'למשל מי שיודע לשבת וללמוד ללא דחיינות הוא גיבור כי הוא כבש את יצריו',
-    },
-    {
-      id: '22',
-      type: 'QUOTE',
-      tags: ['2', '3', '7'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'יום ללא צחוק הוא יום מבוזבז',
-      explanation: '',
-      source: "צ'ארלי צ'פלין",
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '32',
-      type: 'PHRASE',
-      tags: ['5', '6', '2'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'אִם אֵין אֲנִי לִי, מִי לִי? וּכְשֶׁאֲנִי לְעַצְמִי, מָה אֲנִי? וְאִם לֹא עַכְשָׁיו, אֵימָתַי?',
-      explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
-      source: 'אבות, א פסוק יג',
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '41',
-      type: 'PHRASE',
-      tags: ['1', '2', '3', '4', '5'],
-      image: 'https://images.unsplash.com/photo-1416339306562-f3d12fefd36f',
-      content: 'איזהו גבור? - הכובש את יצרו',
-      explanation: 'מיהו גיבור? – אדם שיודע להתאפק ולרסן את יצריו.',
-      example: 'למשל מי שיודע לשבת וללמוד ללא דחיינות  הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא וא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור הוא גיבור כי הוא כבש את יצריו',
-    },
-    {
-      id: '42',
-      type: 'QUOTE',
-      tags: ['2', '3', '7'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'יום ללא צחוק הוא יום מבוזבז',
-      explanation: '',
-      source: "צ'ארלי צ'פלין",
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '43',
-      type: 'PHRASE',
-      tags: ['6', '2'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'אִם אֵין אֲנִי לִי, מִי לִי? וּכְשֶׁאֲנִי לְעַצְמִי, מָה אֲנִי? וְאִם לֹא עַכְשָׁיו, אֵימָתַי?',
-      explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
-      source: 'אבות, א פסוק יג',
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '412',
-      type: 'PHRASE',
-      tags: ['1', '3', '4'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'איזהו גבור? - הכובש את יצרו',
-      explanation: 'מיהו גיבור? – אדם שיודע להתאפק ולרסן את יצריו.',
-      source: 'מסכת אבות, ד פסוק א ',
-      example: 'למשל מי שיודע לשבת וללמוד ללא דחיינות הוא גיבור כי הוא כבש את יצריו',
-    },
-    {
-      id: '422',
-      type: 'QUOTE',
-      tags: ['2', '3', '7'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'יום ללא צחוק הוא יום מבוזבז',
-      explanation: '',
-      source: "צ'ארלי צ'פלין",
-      example: '',
-      isFavorite: true
-    },
-    {
-      id: '432',
-      type: 'PHRASE',
-      tags: ['5', '6', '2'],
-      image: 'https://www.herobuddy.org/wp-content/uploads/2020/03/Super-hero-head-sm-1.jpg',
-      content: 'אִם אֵין אֲנִי לִי, מִי לִי? וּכְשֶׁאֲנִי לְעַצְמִי, מָה אֲנִי? וְאִם לֹא עַכְשָׁיו, אֵימָתַי?',
-      explanation: 'אם אני לא אדאג לעצמי – מי יעשה זאת במקומי? אבל כשאני דואג רק לעצמי ולא לטובת אחרים – מה עֶרְכִּי? ואם איני עושה את חובתי עכשיו – מתי אעשה אותה? (אין לדחות דברים.)',
-      source: 'אבות, א פסוק יג',
-      example: '',
-      isFavorite: true
+let allTags
+let allPhrases
+let db
+let favorites
+let dailyPhraseSettings
+let lastLogin
+let user
+const initDB = async () => {
+  console.log("Init DB")
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyBIeFGvB2PsUbCfp6YihqUZnYtxGr6-GYE",
+    authDomain: "pitgamim-29280.firebaseapp.com",
+    projectId: "pitgamim-29280",
+    storageBucket: "pitgamim-29280.appspot.com",
+    messagingSenderId: "261188976824",
+    appId: "1:261188976824:web:a78e33bcbf6fee03c9f44d",
+    measurementId: "G-N57YJCKVDL",
+  }
+
+  if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig)
+  }
+  db = firebase.firestore();
+
+  firebase.auth().signInAnonymously()
+    .then(() => {
+      console.log('user is signed')
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+
+  firebase.auth().onAuthStateChanged((userProperties) => {
+    if (userProperties) {
+      user = userProperties
+    } else {
+      console.log('User is signed out')
     }
-]
-const enhancedItems = _.map(items, item => ({
-    ...item,
-    tagNames: _.map(item.tags, tagID => _.find(tags, { 'id': tagID }).name)
-}))
-
-const getItems = (searchStr) => {
-    if (searchStr !== undefined && searchStr.length > 0) {
-        return _.filter(enhancedItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr)))
+  })
+    
+  
+  const tagsCollection = await db.collection('database').doc('tags').get()
+  const tags = tagsCollection.data().data
+  allTags = _.orderBy(tags, tag => tag.usage ? parseInt(tag.usage) : 0, 'desc')
+  const phrasesCollection = await db.collection('database').doc('phrases').get()
+  allPhrases = phrasesCollection.data().data
+  
+  favorites = await AsyncStorage.getItem('favorites')
+  if (favorites === null) {
+    await AsyncStorage.setItem('favorites', JSON.stringify('[]'))
+    favorites = []
+  } else {
+    favorites = JSON.parse(favorites)
+  }
+  dailyPhraseSettings = await AsyncStorage.getItem('dailyPhraseSettings')
+  if (dailyPhraseSettings === null) {
+    dailyPhraseSettings = { enabled: false }
+    await AsyncStorage.setItem('dailyPhraseSettings', JSON.stringify(dailyPhraseSettings))
+  } else {
+    dailyPhraseSettings = JSON.parse(dailyPhraseSettings)
+  }
+  console.log('dailyPhraseSettings', dailyPhraseSettings)
+  lastLogin = await AsyncStorage.getItem('lastLogin')
+  if (lastLogin === null) {
+    lastLogin = new Date()
+  } else {
+    lastLogin = new Date(lastLogin)
+  }
+  console.log('lastLogin', lastLogin)
+  if (dailyPhraseSettings.enabled){
+    const currentTime = new Date()
+    const notificationTime = new Date(dailyPhraseSettings.time)
+    const notificationToday = new Date()
+    notificationToday.setSeconds(0)
+    notificationToday.setMinutes(notificationTime.getMinutes())
+    notificationToday.setHours(notificationTime.getHours())
+    console.log('lastLogin', lastLogin, 'notificationToday', notificationToday, 'currentTime', currentTime)
+    if (lastLogin.getTime() < notificationToday.getTime() && notificationToday.getTime() <= currentTime.getTime()){
+      dailyPhraseSettings.shouldSeeDailyPhrase = true
+      console.log('shouldSeeDailyPhrase')
     }
-    return enhancedItems
-}
+  }
+  lastLogin = new Date()
+  await AsyncStorage.setItem('lastLogin', lastLogin.toString())
+  
 
-const getRandomItem = () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const rand = Math.floor(Math.random() * enhancedItems.length)
-      resolve(enhancedItems[rand])
-    }, 2000)
-  })
-}
-
-const getFavoriteItems = (searchStr) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const favoriteItems = _.filter(enhancedItems, item => item.isFavorite)
-        if (searchStr !== undefined && searchStr.length > 0) {
-            resolve(_.filter(favoriteItems, item => _.includes(_.toLower(item.content), _.toLower(searchStr))))
-        }
-      resolve(favoriteItems)
-    }, 1000)
-  })
+  return true
 }
 
 const getTags = (searchStr) => {
-    if (searchStr !== undefined && searchStr.length > 0) {
-        return _.filter(tags, tag => _.includes(_.toLower(tag.name), _.toLower(searchStr)))
-    }
-    return tags
+  if (searchStr !== undefined && searchStr.length > 0) {
+      return _.filter(allTags, tag => _.includes(_.toLower(tag.tag), _.toLower(searchStr)))
+  }
+  return allTags
 }
-
 const getDefaultTagsIDs = () => {
-    return defaultTagsIDs
+  return _.map(_.take(allTags, 5), 'id')
 }
+const resolveItem = (item) => {
+  const { tags } = item
+  const randTag = Math.floor(Math.random() * tags.length)
+  const randTagIndex = _.findIndex(allTags, { tag: tags[randTag] })
+  const image = allTags[randTagIndex]?.url ? allTags[randTagIndex].url : undefined
+  return {
+    ...item,
+    image,
+    isFavorite: _.includes(favorites, item.id)
+  }
+}
+const getItemsByTags = async (tags) => {
+  const requestedTags = _.map(
+    _.filter(allTags, tag => _.includes(tags, tag.id)),
+    'tag'
+  )
+  const results = _.filter(allPhrases, phrase => _.size(_.intersection(requestedTags, phrase.tags)) > 0)
+  return _.map(results, resolveItem)
+}
+const getRandomItem = async () => {
+  console.log('getRandomItem')
+  const rand = Math.floor(Math.random() * allPhrases.length).toString() // Need to get items amount in advance!!!
+  const item = _.filter(allPhrases, phrase => phrase.id === rand)[0]
+  return resolveItem(item)
+}
+const addToFavorites = async (itemId) => {
+  let action
+  if (_.includes(favorites, itemId)){
+    favorites = _.without(favorites, itemId)
+    action = 'removed'
+  } else {
+    favorites = _.union(favorites, [itemId])
+    action = 'added'
+  }
+  const dataStringified = JSON.stringify(favorites)
+  await AsyncStorage.setItem('favorites', dataStringified)
+  return action
+}
+const getFavoriteItems = async () => {
+  const items = _.filter(allPhrases, phrase => _.includes(favorites, phrase.id))
+  return _.map(items, resolveItem)
+}
+const getUser = () => firebase.auth().currentUser
 
-const write = (data) => {
-    console.log('write to local storage')
-    const dataStringified = JSON.stringify(data)
-    return AsyncStorage.setItem('myGoals', dataStringified)
-}
-const read = () => {
-    console.log('read from local storage')
-    return AsyncStorage.getItem('myGoals')
+const updateUserExpoNotificationsToken = (token, dailyPhraseTiming)  => firebase
+  .database()
+  .ref("users")
+  .child(getUser().uid)
+  .update({
+    expoNotificationsToken: token,
+    tokenLastUpdateTime: Date().toString(),
+    dailyPhraseTiming
+  })
+const getDailyPhraseSettings = () => dailyPhraseSettings
+const setDailyPhraseSettings = async (value) => {
+  dailyPhraseSettings = value
+  return AsyncStorage.setItem('dailyPhraseSettings', JSON.stringify(dailyPhraseSettings))
 }
 
 export {
-    getItems,
-    getTags,
-    getDefaultTagsIDs,
-    getRandomItem,
-    getFavoriteItems,
+  initDB,
+  getTags,
+  getDefaultTagsIDs,
+  getItemsByTags,
+  getRandomItem,
+  addToFavorites,
+  getFavoriteItems,
+  getUser,
+  updateUserExpoNotificationsToken,
+  getDailyPhraseSettings,
+  setDailyPhraseSettings
 }

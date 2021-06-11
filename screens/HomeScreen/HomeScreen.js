@@ -47,11 +47,11 @@ async function registerForPushNotification(){
 
 const HomeScreen = ({ navigation, route }) => {
   const [randomItem, setRandomItem] = useState(undefined)
-  const [dailyPhraseEnabled, setDailyPhraseEnabled] = useState(false)
+  const [dailyPhraseEnabled, setDailyPhraseEnabled] = useState(DB.getDailyPhraseSettings().enabled)
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [notificationTime, setNotificationTime] = useState(new Date())
   const [popupContent, setPopupContent] = useState(null)
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notificationTrigger, setNotificationTrigger] = useState(false)
 
   const randomItemRefresh = () => {
     setRandomItem(undefined)
@@ -77,53 +77,72 @@ const HomeScreen = ({ navigation, route }) => {
       return Dictionary.HOME_SCREEN.GREETINGS.NIGHT
     } 
   }
-
-  const handleDailyPhraseSwitch = async (on) => {
+  const handleDailyPhraseSwitch = async (on, selectedDate) => {
     if (on) {
+      setDailyPhraseEnabled(true)
       registerForPushNotification().then(token => {
+        DB.updateUserExpoNotificationsToken(token, selectedDate)
         console.log(token)
         if (token !== undefined) {
-          setDailyPhraseEnabled(true)
-          setExpoPushToken(token)
-          Notifications.scheduleNotificationAsync({
-            content: {
-              title: "פתגם אחד ביום",
-              body: 'סדנא דארעה חד הוא',
-              data: { data: 'goes here' },
-            },
-            trigger: {
-              hour: notificationTime.getHours(),
-              minute: notificationTime.getMinutes(),
-              repeats: true
-            },
-          }).then(resp => {
-            console.log('notification', resp)
+          DB.setDailyPhraseSettings({
+            enabled: true,
+            time: selectedDate
+          }).then(() => {
+            setPopupContent({
+              content: "תזמון פתגם יומי פעיל",
+              timeStamp: Date()
+            })
+          })
+          Notifications.cancelAllScheduledNotificationsAsync().then(() => {
+              Notifications.scheduleNotificationAsync({
+              content: {
+                title: "פתגם אחד ביום",
+                body: 'הפתגם היומי שלך מחכה לך!',
+                data: { notificationType: 'dailyPhrase' },
+              },
+              trigger: {
+                hour: selectedDate.getHours(),
+                minute: selectedDate.getMinutes(),
+                repeats: true
+              },
+            }).then(resp => {
+              console.log('notification', resp)
+            })
           })
         }
       })
     } else {
-      Notifications.cancelAllScheduledNotificationsAsync()
       setDailyPhraseEnabled(false)
+      Notifications.cancelAllScheduledNotificationsAsync()
+      DB.setDailyPhraseSettings({
+        enabled: false
+      }).then(() => {
+        setPopupContent({
+          content: "תזמון פתגם יומי כבוי",
+          timeStamp: Date()
+        })
+      })
     }
   }
 
   useEffect(() => {
     randomItemRefresh()
-  }, [])
-
-  useEffect(() => {
-    if (dailyPhraseEnabled){
-      setPopupContent({
-        content: "תזמון פתגם יומי פעיל",
-        timeStamp: Date()
-      })
+    const dailyPhraseSettings = DB.getDailyPhraseSettings()
+    if (dailyPhraseSettings.enabled){
+      setNotificationTime(new Date(dailyPhraseSettings.time))
+    }
+    if (dailyPhraseSettings.shouldSeeDailyPhrase) {
+      setNotificationTrigger(true)
     } else {
-      setPopupContent({
-        content: "תזמון פתגם יומי כבוי",
-        timeStamp: Date()
+      Notifications.addNotificationResponseReceivedListener(response => {
+        if (response.notification.request.content.data.notificationType === 'dailyPhrase'){
+          setNotificationTrigger(true)
+        }
       })
     }
-  }, [dailyPhraseEnabled])
+
+  }, [])
+
   return (
     <Screen.Screen>
       <Screen.Header title={Dictionary.HOME_SCREEN.HEADER} />
@@ -142,7 +161,7 @@ const HomeScreen = ({ navigation, route }) => {
                 trackColor={{ false: Colors.GRAY, true: Colors.PRIMARY }}
                 thumbColor={Colors.LIGHT_GRAY}
                 ios_backgroundColor="#3e3e3e"
-                onValueChange={(value) => handleDailyPhraseSwitch(value)}
+                onValueChange={(value) => handleDailyPhraseSwitch(value, notificationTime)}
                 value={dailyPhraseEnabled}
               />
             </View>
@@ -150,9 +169,9 @@ const HomeScreen = ({ navigation, route }) => {
           </View>
           
           <TouchableOpacity style={Styles.timer.rightSide.wrapper} onPress={() => setDatePickerVisibility(true)}>
-              <Text style={Styles.timer.rightSide.digitsText}>{padTimeString(notificationTime.getHours())}</Text>
+              <Text style={Styles.timer.rightSide.digitsText(dailyPhraseEnabled)}>{padTimeString(notificationTime.getHours())}</Text>
               <Text style={Styles.timer.rightSide.colon}>:</Text>
-              <Text style={Styles.timer.rightSide.digitsText}>{padTimeString(notificationTime.getMinutes().toString())}</Text>
+              <Text style={Styles.timer.rightSide.digitsText(dailyPhraseEnabled)}>{padTimeString(notificationTime.getMinutes().toString())}</Text>
           </TouchableOpacity>
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
@@ -160,6 +179,9 @@ const HomeScreen = ({ navigation, route }) => {
             onConfirm={(selectedDate) => {
               setNotificationTime(selectedDate)
               setDatePickerVisibility(false)
+              if (dailyPhraseEnabled){
+                handleDailyPhraseSwitch(true, selectedDate)
+              }
             }}
             onCancel={() => setDatePickerVisibility(false)}
           />
@@ -170,8 +192,13 @@ const HomeScreen = ({ navigation, route }) => {
             ? <Card
                 item={randomItem}
                 navigation={navigation}
-                customHeader={Dictionary.HOME_SCREEN.RANDOM_ITEM.TITLE}
+                customHeader={notificationTrigger ? Dictionary.HOME_SCREEN.TIMER.TITLE : Dictionary.HOME_SCREEN.RANDOM_ITEM.TITLE}
                 handleRefresh={randomItemRefresh}
+                notificationTrigger={notificationTrigger}
+                onClose={() => {
+                  setNotificationTrigger(false)
+                  randomItemRefresh()
+                }}
               />
             : <Loading />
           }

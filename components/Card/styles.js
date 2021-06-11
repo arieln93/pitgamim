@@ -65,11 +65,45 @@ export default StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: Colors.GRAY,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     collapsibleFooterText: {
         ...Styles.metadata,
         color: Colors.PRIMARY
-
+    },
+    collapsibleCloseText: {
+        ...Styles.metadata,
+        color: Colors.PRIMARY_LIGHT,
+    },
+    imageBackground: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        resizeMode: "cover",
+    },
+    imageBackgroundContent: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 200,
+    },
+    phraseModalWrapper: {
+        flexDirection: 'column',
+        position: 'absolute',
+        alignSelf: 'center',
+        bottom: '0%',
+        zIndex: 1,
+        width: '100%',
+        backgroundColor: 'white',
+        shadowColor: 'black',
+        shadowOffset: {
+            width: 1,
+            height: 1
+        },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,  
+        elevation: 3,
+        padding: 10,
+        margin: 5,
     }
 })

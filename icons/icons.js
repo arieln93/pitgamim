@@ -3,6 +3,7 @@ export default {
     blur: require('./blur.png'),
     border: require('./border.png'),
     brightness: require('./brightness.png'),
+    background: require('./background.png'),
     email: require('./email.png'),
     exit: require('./exit.png'),
     export: require('./export.png'),

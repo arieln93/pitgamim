@@ -43,6 +43,24 @@ export default {
             })
         }),
     },
+    backgroundFilter: (color, isOptionSelected) => StyleSheet.flatten({
+        width: 60,
+        height: 60,
+        backgroundColor: color,
+        borderColor: isOptionSelected ? color : Colors.WHITE,
+        borderWidth: 6,
+        borderRadius: 30,
+        shadowColor: Colors.BLACK,
+        shadowOffset: {
+            width: 1,
+            height: 1
+        },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,  
+        elevation: 3,
+        padding: 10,
+        margin: 5
+    }),
     filterButton: StyleSheet.create({
         wrapper: {
             backgroundColor: Colors.WHITE,

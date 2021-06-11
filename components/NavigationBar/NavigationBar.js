@@ -70,8 +70,11 @@ const NavigationBar = props => {
             component={screen.component}
             options={{
               tabBarIcon: ({ focused }) => (
-                <Image source={screen.icon} style={Styles.icon(focused)}/>),
-              tabBarLabel: ({ focused }) => (<Text style={Styles.title(focused)}>{screen.title}</Text>)
+                <Image source={screen.icon} style={Styles.icon(focused)}/>
+              ),
+              tabBarLabel: ({ focused }) => (
+                <Text style={Styles.title(focused)}>{screen.title}</Text>
+              )
             }}
           />
         ))}

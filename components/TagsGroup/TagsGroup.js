@@ -32,7 +32,7 @@ const TagsGroup = props => {
         { tags.map(item => (
           <View key={item.id} style={{ margin: 5 }}>
             <Tag
-              content={item.name}
+              content={item.tag}
               isSelected={_.includes(selectedTagsIDs, item.id)}
               handleTagPress={() => handleTagPress(item.id)}
             />
@@ -51,7 +51,7 @@ const TagsGroup = props => {
       ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
       renderItem={({item}) => (
         <Tag
-          content={item.name}
+          content={item.tag}
           isSelected={_.includes(selectedTagsIDs, item.id)}
           handleTagPress={() => handleTagPress(item.id)}
         />)}
