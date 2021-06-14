@@ -22,9 +22,9 @@ const ExploreScreen = ({ navigation, route }) => {
   const [selectedTagsIDs, setSelectedTagsIDs] = useState([])
   const [items, setItems] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const inputRef = useRef(null);
-  const cardsListRef = useRef(null);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const inputRef = useRef(null)
+  const cardsListRef = useRef(null)
+  const fadeAnim = useRef(new Animated.Value(1)).current
 
   const fadeInItemsList = () => {
     Animated.timing(fadeAnim, {
@@ -32,14 +32,14 @@ const ExploreScreen = ({ navigation, route }) => {
       duration: 300,
       useNativeDriver: true
     }).start();
-  };
+  }
   const fadeOutItemsList = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 300,
       useNativeDriver: true
     }).start();
-  };
+  }
 
   const handleTagPress = (tagID) => {
     if (_.includes(userSelectedTagsIDs, tagID)) {
@@ -150,7 +150,7 @@ const ExploreScreen = ({ navigation, route }) => {
           />
         </Animated.View>
         <Animated.View style={[Styles.itemsList, { opacity: fadeAnim }]}>
-          { isLoading ? <Loading /> : <CardsList ref={cardsListRef} items={items} navigation={navigation} /> }
+          { isLoading || !items ? <Loading /> : <CardsList ref={cardsListRef} items={items} navigation={navigation} /> }
         </Animated.View>
       </Screen.Body>
     </Screen.Screen>

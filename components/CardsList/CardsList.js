@@ -1,10 +1,11 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect } from 'react'
 import { FlatList, View, Text } from 'react-native'
 import Card from '../Card/Card'
 import Styles from './styles'
 
 const CardsList = (props, ref) => {
   const { items, navigation} = props
+
   return (
     <FlatList
       ref={ref}

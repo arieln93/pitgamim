@@ -45,6 +45,7 @@ export default {
         TITLE: 'יצירה',
         HEADER: 'שתף פתגם',
         SHARING_SENTENCE: {
+            BUTTON: 'שיתוף',
             PHRASE: 'ידע הוא כוח',
             SOURCE: 'פרנסיס בייקון'
         },

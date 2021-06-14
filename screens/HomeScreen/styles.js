@@ -63,10 +63,7 @@ export default {
                 color: Colors.PRIMARY,
             },
             contentText: {
-                flex: 1,
                 ...Styles.metadata,
-                paddingRight: 10,
-                paddingLeft: 10,
                 color: Colors.BLACK
             },
         })

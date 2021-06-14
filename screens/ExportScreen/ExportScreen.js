@@ -464,8 +464,7 @@ const ExportScreen = ({ navigation, route }) => {
             </View>
             <View style={Styles.exportSection.wrapper}>
               <View style={Styles.exportSection.sharingSentence.wrapper}>
-                <Text style={Styles.exportSection.sharingSentence.phrase}>"{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.PHRASE}"</Text>
-                <Text style={Styles.exportSection.sharingSentence.source}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.SOURCE}</Text>
+                <Text style={Styles.exportSection.sharingSentence.button}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.BUTTON}</Text>
               </View>
               <TouchableOpacity
                 onPress={exportImage}

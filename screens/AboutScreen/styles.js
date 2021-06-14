@@ -30,15 +30,16 @@ export default {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
             },
             buttonWrapper: {
                 margin: 5,
             },
             buttonIcon: {
                 tintColor: Colors.PRIMARY,
-                width: 50,
-                height: 50,
+                width: 33,
+                height: 22,
+                resizeMode: "cover"
             }
         }),
 

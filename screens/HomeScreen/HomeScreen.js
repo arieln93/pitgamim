@@ -165,7 +165,9 @@ const HomeScreen = ({ navigation, route }) => {
                 value={dailyPhraseEnabled}
               />
             </View>
-            <Text style={Styles.timer.leftSide.contentText}>{Dictionary.HOME_SCREEN.TIMER.CONTENT}</Text>
+            <View style={{ flex: 1, margin: 2}}>
+              <Text adjustsFontSizeToFit style={Styles.timer.leftSide.contentText}>{Dictionary.HOME_SCREEN.TIMER.CONTENT}</Text>
+            </View>
           </View>
           
           <TouchableOpacity style={Styles.timer.rightSide.wrapper} onPress={() => setDatePickerVisibility(true)}>
@@ -197,7 +199,7 @@ const HomeScreen = ({ navigation, route }) => {
                 notificationTrigger={notificationTrigger}
                 onClose={() => {
                   setNotificationTrigger(false)
-                  randomItemRefresh()
+                  notificationTrigger && randomItemRefresh()
                 }}
               />
             : <Loading />

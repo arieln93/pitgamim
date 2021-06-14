@@ -102,6 +102,7 @@ export default {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            flexGrow: 1,
         }),
         sharingSentence: StyleSheet.create({
             wrapper: {
@@ -109,13 +110,17 @@ export default {
                 justifyContent: 'center',
                 alignItems: 'center'
             },
+            button: {
+                ...Styles.lightTitle,
+                color: Colors.PRIMARY
+            },
             phrase: {
                 ...Styles.secondaryTitle,
-                color: Colors.PRIMARY
+                color: Colors.PRIMARY_LIGHT
             },
             source: {
                 ...Styles.content,
-                color: Colors.PRIMARY
+                color: Colors.PRIMARY_LIGHT
             },
         }),
         exportButton: StyleSheet.create({

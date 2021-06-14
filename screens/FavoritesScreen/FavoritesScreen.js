@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import _ from 'lodash'
 import * as DB from '../../DB'
@@ -11,6 +11,7 @@ import * as Screen from '../Screen'
 
 const FavoritesScreen = ({ navigation, route }) => {
   const [items, setItems] = useState(undefined)
+  const cardsListRef = useRef(null);
   const loadFavorites = () => DB.getFavoriteItems().then((favoriteItems) => setItems(favoriteItems))
   useEffect(() => {
     loadFavorites()
@@ -27,7 +28,7 @@ const FavoritesScreen = ({ navigation, route }) => {
       <Screen.Body>
         { items
           ? <View style={Styles.itemsList}>
-              <CardsList items={items} navigation={navigation} />
+              <CardsList ref={cardsListRef} items={items} navigation={navigation} />
             </View>
           : <Loading />
         }

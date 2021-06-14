@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+
 import { useFonts } from "@use-expo/font"
 
 import _ from 'lodash'
 import NavigationBar from './components/NavigationBar/NavigationBar'
 import Loading from './components/Loading/Loading'
 import * as DB from './DB'
-import * as Notifications from 'expo-notifications'
+
+import { I18nManager } from "react-native"
+I18nManager.forceRTL(false)
+I18nManager.allowRTL(false)
 
 const customFonts = {
   "Heebo-Regular" : require("./assets/fonts/Heebo-Regular.ttf"),
