@@ -38,8 +38,8 @@ export default {
   metadata: {
     fontFamily: "Heebo-Medium",
     fontStyle: "normal",
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 17,
     letterSpacing: -0.3,
   },
   content: {

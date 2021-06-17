@@ -192,11 +192,7 @@ const HomeScreen = ({ navigation, route }) => {
               />
             </View>
             <View style={{ flex: 1, margin: 2 }}>
-              <Text
-                adjustsFontSizeToFit
-                numberOfLines={2}
-                style={Styles.timer.leftSide.contentText}
-              >
+              <Text numberOfLines={2} style={Styles.timer.leftSide.contentText}>
                 {Dictionary.HOME_SCREEN.TIMER.CONTENT}
               </Text>
             </View>
