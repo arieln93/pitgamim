@@ -53,9 +53,13 @@ export default {
             },
             headerWrapper: {
                 flexDirection: 'row',
+                flexGrow: 0
             },
             switch: {
+                flexGrow: 0,
+                margin: 0,
                 marginLeft: 10,
+                padding: 0,
             },
             headerText: {
                 ...Styles.secondaryTitle,

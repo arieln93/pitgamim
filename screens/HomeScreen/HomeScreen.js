@@ -176,10 +176,9 @@ const HomeScreen = ({ navigation, route }) => {
               />
             </View>
             <View style={{ flex: 1, margin: 2}}>
-              <Text adjustsFontSizeToFit style={Styles.timer.leftSide.contentText}>{Dictionary.HOME_SCREEN.TIMER.CONTENT}</Text>
+              <Text adjustsFontSizeToFit numberOfLines={2} style={Styles.timer.leftSide.contentText}>{Dictionary.HOME_SCREEN.TIMER.CONTENT}</Text>
             </View>
           </View>
-          
           <TouchableOpacity style={Styles.timer.rightSide.wrapper} onPress={() => setDatePickerVisibility(true)}>
               <Text style={Styles.timer.rightSide.digitsText(dailyPhraseEnabled)}>{padTimeString(notificationTime.getHours())}</Text>
               <Text style={Styles.timer.rightSide.colon}>:</Text>
