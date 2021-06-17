@@ -1,5 +1,12 @@
 import React from 'react';
-import { Text, View, ScrollView, Image } from 'react-native';
+import { Text, View, ScrollView, Image, I18nManager } from 'react-native';
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 import _ from 'lodash'
 
 import Styles from './styles'

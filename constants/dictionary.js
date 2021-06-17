@@ -44,6 +44,12 @@ export default {
         NAME: 'export',
         TITLE: 'יצירה',
         HEADER: 'שתף פתגם',
+        INSTRUCTIONS: {
+            WELCOME: 'ברוכים הבאים למסך השיתוף',
+            CONTENT_PART_ONE: 'בחרו פתגם לשיתוף ממסך החיפוש או המועדפים ע"י לחיצה על סמל השיתוף',
+            CONTENT_PART_TWO: 'או הטעינו פתגם אקראי למסך זה.'
+
+        },
         SHARING_SENTENCE: {
             BUTTON: 'שיתוף',
             PHRASE: 'ידע הוא כוח',

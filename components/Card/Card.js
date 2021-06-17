@@ -133,9 +133,11 @@ const Card = props => {
             DB.addToFavorites(item.id).then(resp => {
               let message
               if (resp === 'added'){
+                DB.sendAnalytics('item_added_to_favorites', item.id)
                 setIsFavorite(true)
                 message = Dictionary.CARD.SAVED_TO_FAVORITES
               } else {
+                DB.sendAnalytics('item_removed_from_favorites', item.id)
                 setIsFavorite(false)
                 message = Dictionary.CARD.REMOVED_FROM_FAVORITES
               }
@@ -185,7 +187,8 @@ const Card = props => {
               if (onClose) {
                 onClose()
               }
-            }}>
+            }}
+            style={{ width: '50%', alignItems: 'center'}}>
               <Text style={Styles.collapsibleCloseText}>סגור</Text>
             </TouchableOpacity>
         </View>

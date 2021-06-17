@@ -1,6 +1,12 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
-
+import { View, I18nManager } from 'react-native';
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 import Styles from '../constants/styles'
 
 import ScreenHeader from '../components/ScreenHeader/ScreenHeader'

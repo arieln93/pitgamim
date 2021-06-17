@@ -1,8 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Text, View, ScrollView, FlatList, Button, Image, TouchableOpacity, ImageBackground } from 'react-native';
-import Slider from '@react-native-community/slider';
-import * as ImagePicker from 'expo-image-picker';
-
+import React, { useRef, useState, useEffect } from 'react'
+import { Text, View, ScrollView, FlatList, Image, TouchableOpacity, I18nManager } from 'react-native'
+import MultiSlider from '@ptomasroos/react-native-multi-slider'
+import * as ImagePicker from 'expo-image-picker'
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 import ViewShot from "react-native-view-shot";
 import * as Sharing from 'expo-sharing';
 import _ from 'lodash'
@@ -14,8 +20,6 @@ import Icons from '../../icons/icons'
 
 import * as DB from '../../DB'
 import * as Screen from '../Screen'
-
-import Loading from '../../components/Loading/Loading'
 
 const FilterButton = props => {
   const { icon, handleClick } = props
@@ -45,13 +49,13 @@ const SliderFilter = props => {
   const { value, minimum, maximum, step, onChange } = props
   return (
     <View style={Styles.sliderFilter.wrapper}>
-      <Slider
-        style={Styles.sliderFilter.slider}
-        value={value}
-        minimumValue={minimum}
-        maximumValue={maximum}
+      <MultiSlider
+        containerStyle={Styles.sliderFilter.slider}
+        values={[value]}
+        min={minimum}
+        max={maximum}
         step={step}
-        onValueChange={onChange}
+        onValuesChange={(values) => onChange(values[0])}
       />
     </View>
   )
@@ -61,13 +65,13 @@ const ColorFilter = props => {
   const { value, minimum, maximum, step, onChange } = props
   return (
     <View style={Styles.sliderFilter.wrapper}>
-      <Slider
-        style={Styles.sliderFilter.slider}
-        value={value}
-        minimumValue={minimum}
-        maximumValue={maximum}
+      <MultiSlider
+        containerStyle={Styles.sliderFilter.slider}
+        values={[value]}
+        min={minimum}
+        max={maximum}
         step={step}
-        onValueChange={onChange}
+        onValuesChange={(values) => onChange(values[0])}
       />
     </View>
   )
@@ -124,15 +128,15 @@ const ExportScreen = ({ navigation, route }) => {
     opacity: {
       title: Dictionary.EXPORT_SCREEN.FILTERS.OPACITY,
       value: 0.3,
-      minimum: 1,
-      maximum: 0,
-      step: -0.05
+      minimum: 0,
+      maximum: 1,
+      step: 0.05
     },
     blur: {
       title: Dictionary.EXPORT_SCREEN.FILTERS.BLUR,
       value: 0,
       minimum: 0,
-      maximum: 10,
+      maximum: 5,
       step: 0.5
     },
     borderWidth: {
@@ -178,13 +182,13 @@ const ExportScreen = ({ navigation, route }) => {
   const [image, setImage] = useState()
   const [filters, setFilters] = useState(getInitialFilters())
   const [currentFilter, setCurrentFilter] = useState(null)
+  const [showInstructions, setShowInstructions] = useState(true)
   const shot = useRef(null)
   
   useEffect(() => {
     if(route?.params?.item) {
       setItem(route.params.item)
-    } else {
-      DB.getRandomItem().then(item => setItem(item))
+      DB.sendAnalytics('navigated_to_export_screen_with_item', route.params.item.id)
     }
   }, [route])
 
@@ -193,14 +197,17 @@ const ExportScreen = ({ navigation, route }) => {
       setImage(item.image)
       setFilters(getInitialFilters())
       setCurrentFilter(null)
+      setShowInstructions(false)
     }
   }, [item])
 
   const exportImage =  () => {
-    console.log(shot.current)
-    shot.current.capture().then(uri => {
-      Sharing.shareAsync(uri)
-    })
+    DB.sendAnalytics('export_btn_clicked')
+    if (!showInstructions) {
+      shot.current.capture().then(uri => {
+        Sharing.shareAsync(uri)
+      })
+    }
   }
   const pickImageHandler = async () => {
     if (Platform.OS !== 'web') {
@@ -228,6 +235,7 @@ const ExportScreen = ({ navigation, route }) => {
     }
   }
   const renderFilter = () => {
+    DB.sendAnalytics('filter_used', currentFilter)
     switch (currentFilter) {
       case 'background':
         return (
@@ -329,18 +337,6 @@ const ExportScreen = ({ navigation, route }) => {
                 })}
               />
             </Filter>
-            <Filter key="fontColor" title={filters.fontColor.title}>
-              <ColorFilter
-                {...filters.fontColor}
-                onChange={value => setFilters({
-                  ...filters,
-                  fontColor: {
-                    ...filters.fontColor,
-                    value
-                  }
-                })}
-              />
-            </Filter>
             <Filter key="fontStyle" title={filters.fontStyle.title}>
               <FontsFilter
                 {...filters.fontStyle}
@@ -348,6 +344,18 @@ const ExportScreen = ({ navigation, route }) => {
                   ...filters,
                   fontStyle: {
                     ...filters.fontStyle,
+                    value
+                  }
+                })}
+              />
+            </Filter>
+            <Filter key="fontColor" title={filters.fontColor.title}>
+              <ColorFilter
+                {...filters.fontColor}
+                onChange={value => setFilters({
+                  ...filters,
+                  fontColor: {
+                    ...filters.fontColor,
                     value
                   }
                 })}
@@ -361,7 +369,6 @@ const ExportScreen = ({ navigation, route }) => {
     <Screen.Screen>
       <Screen.Header title={Dictionary.EXPORT_SCREEN.HEADER} />
       <Screen.Body>
-        { item ? <>
     <View style={{ marginBottom: 20 }}>
       <ViewShot
         ref={shot}
@@ -372,61 +379,87 @@ const ExportScreen = ({ navigation, route }) => {
         style={{
           backgroundColor: 'white',
         }}>
-        <View
-          style={{
-            width: '100%',
-            height: 300,
-            borderWidth: filters.borderWidth.value,
-            borderColor: `rgb(${filters.borderColor.value},${filters.borderColor.value},${filters.borderColor.value})`,
-            flexDirection: 'column'
-          }}>
-          { filters.background.value === null
-            ? <Image
-                source={{ uri: image}}
-                blurRadius={filters.blur.value}
+        { showInstructions
+          ? <View style={Styles.instructions.wrapper}>
+              <Text adjustsFontSizeToFit style={Styles.instructions.title}>{Dictionary.EXPORT_SCREEN.INSTRUCTIONS.WELCOME}</Text>
+              <Text adjustsFontSizeToFit style={Styles.instructions.content}>{Dictionary.EXPORT_SCREEN.INSTRUCTIONS.CONTENT_PART_ONE} (<Image style={Styles.instructions.icon} source={Icons.share} />) {Dictionary.EXPORT_SCREEN.INSTRUCTIONS.CONTENT_PART_TWO}</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableOpacity style={Styles.instructions.buttonWrapper} onPress={() => {
+                  DB.sendAnalytics('user_navigated_to_search_phrase_from_exports')
+                  navigation.jumpTo(Dictionary.EXPLORE_SCREEN.NAME)
+                }}>
+                  <Text style={Styles.instructions.buttonText}>
+                    חפש
+                  </Text>
+                  <Image style={Styles.instructions.buttonIcon} source={Icons.search} />
+                </TouchableOpacity>
+                <TouchableOpacity style={Styles.instructions.buttonWrapper} onPress={() => {
+                  DB.sendAnalytics('user_loaded_random_phrase_to_exports')
+                  DB.getRandomItem().then(item => setItem(item))
+                }}>
+                  <Text style={Styles.instructions.buttonText}>
+                    טען
+                  </Text>
+                  <Image style={Styles.instructions.buttonIcon} source={Icons.refresh} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          : <View
+              style={{
+                width: '100%',
+                height: 300,
+                borderWidth: filters.borderWidth.value,
+                borderColor: `rgb(${filters.borderColor.value},${filters.borderColor.value},${filters.borderColor.value})`,
+                flexDirection: 'column'
+              }}>
+              { filters.background.value === null
+                ? <Image
+                    source={{ uri: image}}
+                    blurRadius={filters.blur.value}
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      opacity: filters.opacity.value,
+                    }}
+                    resizeMode="cover"
+                  />
+                : <View
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: filters.background.value,
+                      opacity: filters.opacity.value,
+                    }}
+                  />
+              }
+              <View
                 style={{
                   position: 'absolute',
                   width: '100%',
                   height: '100%',
-                  opacity: filters.opacity.value,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
-                resizeMode="cover"
-              />
-            : <View
+              >
+              <Text
+                adjustsFontSizeToFit
                 style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: filters.background.value,
-                  opacity: filters.opacity.value,
-                }}
-              />
-          }
-          <View
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-          <Text
-            adjustsFontSizeToFit
-            style={{
-              padding: 5,
-              fontFamily: filters.fontStyle.value,
-              fontSize: filters.fontSize.value,
-              color: `rgb(${filters.fontColor.value},${filters.fontColor.value},${filters.fontColor.value})`,
-              textAlign: 'center'
-            }}>
-              {item.phrase}
-            </Text>
-          </View>
-        </View>
+                  padding: 5,
+                  fontFamily: filters.fontStyle.value,
+                  fontSize: filters.fontSize.value,
+                  color: `rgb(${filters.fontColor.value},${filters.fontColor.value},${filters.fontColor.value})`,
+                  textAlign: 'center'
+                }}>
+                  {item.phrase}
+                </Text>
+              </View>
+            </View>
+        }
       </ViewShot>
     </View>
-    { currentFilter !== null
+    { currentFilter !== null && !showInstructions
       ? (
           <>
             {renderFilter()}
@@ -464,7 +497,7 @@ const ExportScreen = ({ navigation, route }) => {
             </View>
             <View style={Styles.exportSection.wrapper}>
               <View style={Styles.exportSection.sharingSentence.wrapper}>
-                <Text style={Styles.exportSection.sharingSentence.button}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.BUTTON}</Text>
+                <Text adjustsFontSizeToFit style={Styles.exportSection.sharingSentence.button}>{Dictionary.EXPORT_SCREEN.SHARING_SENTENCE.BUTTON}</Text>
               </View>
               <TouchableOpacity
                 onPress={exportImage}
@@ -477,7 +510,6 @@ const ExportScreen = ({ navigation, route }) => {
             </View>
           </>
       )}
-    </> : <Loading />}
       </Screen.Body>
     </Screen.Screen>
   )

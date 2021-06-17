@@ -33,10 +33,16 @@
         "backgroundImage": "./assets/adaptive-icon.png"
       },
       "package": "com.pitgamim.pitgamim",
-      "versionCode": 33
+      "versionCode": 44
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyBIeFGvB2PsUbCfp6YihqUZnYtxGr6-GYE",
+          "measurementId": "G-N57YJCKVDL"
+        }
+      }
     }
   }
 }

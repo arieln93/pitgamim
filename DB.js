@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as firebase from 'firebase';
-import 'firebase/firestore';
+import * as firebase from 'firebase'
+import * as Analytics from 'expo-firebase-analytics';
+import 'firebase/firestore'
 import _ from 'lodash'
-import { createNativeWrapper } from 'react-native-gesture-handler';
 
 let allTags
 let allPhrases
@@ -40,6 +40,7 @@ const initDB = async () => {
   firebase.auth().onAuthStateChanged((userProperties) => {
     if (userProperties) {
       user = userProperties
+      Analytics.setClientId(user.uid)
     } else {
       console.log('User is signed out')
     }
@@ -104,10 +105,13 @@ const getDefaultTagsIDs = () => {
   return _.map(_.take(allTags, 5), 'id')
 }
 const resolveItem = (item) => {
-  const { tags } = item
-  const randTag = Math.floor(Math.random() * tags.length)
-  const randTagIndex = _.findIndex(allTags, { tag: tags[randTag] })
-  const image = allTags[randTagIndex]?.url ? allTags[randTagIndex].url : undefined
+  let image
+  if (item.tags) {
+    const { tags } = item
+    const randTag = Math.floor(Math.random() * tags.length)
+    const randTagIndex = _.findIndex(allTags, { tag: tags[randTag] })
+    image = allTags[randTagIndex]?.url ? allTags[randTagIndex].url : undefined
+  }
   return {
     ...item,
     image,
@@ -120,12 +124,13 @@ const getItemsByTags = async (tags) => {
     'tag'
   )
   const results = _.filter(allPhrases, phrase => _.size(_.intersection(requestedTags, phrase.tags)) > 0)
-  return _.map(results, resolveItem)
+  return _.shuffle(_.map(results, resolveItem))
 }
 const getRandomItem = async () => {
   console.log('getRandomItem')
-  const rand = Math.floor(Math.random() * allPhrases.length).toString() // Need to get items amount in advance!!!
-  const item = _.filter(allPhrases, phrase => phrase.id === rand)[0]
+  const phrasesOnly = await getItemsByTags(['40'])
+  const rand = Math.floor(Math.random() * phrasesOnly.length)
+  const item = phrasesOnly[rand]
   return resolveItem(item)
 }
 const addToFavorites = async (itemId) => {
@@ -161,6 +166,12 @@ const setDailyPhraseSettings = async (value) => {
   dailyPhraseSettings = value
   return AsyncStorage.setItem('dailyPhraseSettings', JSON.stringify(dailyPhraseSettings))
 }
+const sendAnalytics = async (eventName, additionalData) => {
+  Analytics.logEvent(eventName, {
+    user: getUser().uid,
+    additionalData: additionalData || 'not provided'
+  }).then(() => console.log('analytics sent', eventName))
+}
 
 export {
   initDB,
@@ -173,5 +184,6 @@ export {
   getUser,
   updateUserExpoNotificationsToken,
   getDailyPhraseSettings,
-  setDailyPhraseSettings
+  setDailyPhraseSettings,
+  sendAnalytics
 }

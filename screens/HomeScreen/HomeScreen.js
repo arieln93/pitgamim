@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Switch, TouchableOpacity, Platform } from 'react-native';
+import { Text, View, Switch, TouchableOpacity, Platform, I18nManager } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications'
 import _ from 'lodash'
@@ -13,6 +13,14 @@ import * as Screen from '../Screen'
 import Card from '../../components/Card/Card'
 import Loading from '../../components/Loading/Loading'
 import Popup from '../../components/Popup/Popup'
+
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -79,6 +87,7 @@ const HomeScreen = ({ navigation, route }) => {
   }
   const handleDailyPhraseSwitch = async (on, selectedDate) => {
     if (on) {
+      DB.sendAnalytics('daily_phrase_enabled', selectedDate.toString())
       setDailyPhraseEnabled(true)
       registerForPushNotification().then(token => {
         DB.updateUserExpoNotificationsToken(token, selectedDate)
@@ -112,6 +121,7 @@ const HomeScreen = ({ navigation, route }) => {
         }
       })
     } else {
+      DB.sendAnalytics('daily_phrase_disabled')
       setDailyPhraseEnabled(false)
       Notifications.cancelAllScheduledNotificationsAsync()
       DB.setDailyPhraseSettings({

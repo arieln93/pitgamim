@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Keyboard, ScrollView, Animated, TextInput, Image, Text, TouchableOpacity } from 'react-native';
+import { View, Keyboard, ScrollView, Animated, TextInput, Image, Text, TouchableOpacity, I18nManager } from 'react-native'
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 import Collapsible from 'react-native-collapsible'
 import _ from 'lodash'
 
@@ -44,9 +51,9 @@ const ExploreScreen = ({ navigation, route }) => {
   const handleTagPress = (tagID) => {
     if (_.includes(userSelectedTagsIDs, tagID)) {
       const updatedTags = _.filter(userSelectedTagsIDs, id => id !== tagID)
-      console.log('updatedTags', updatedTags)
       setUserSelectedTagsIDs(updatedTags)
     } else {
+      DB.sendAnalytics('tag_selected', tagID)
       setUserSelectedTagsIDs([...userSelectedTagsIDs, tagID])
     }
   }

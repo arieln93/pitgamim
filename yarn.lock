@@ -1983,6 +1983,11 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@ptomasroos/react-native-multi-slider@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@ptomasroos/react-native-multi-slider/-/react-native-multi-slider-2.2.2.tgz#35a97fb8c355627c6a2ded010b360ac5728b44ad"
+  integrity sha512-HWyCnRD3Z3SbHK2FLWYmBBqd1B4iXipeKv1+AK0FoY/CElEDTEixHE8hN60TsqxalPrznn798LE2Q4tHuCiyaA==
+
 "@react-native-async-storage/async-storage@^1.15.5":
   version "1.15.5"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.5.tgz#0d221a5ef1cd7a6494a42fcaad43136d68379afb"
@@ -2127,10 +2132,15 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
   integrity sha512-8IeHfDwJ9/CTUwFs6x90VlobV3BfuPgNLjTgC6dRZovfCWigaZwVNIFFJnHBakK3pW2xErAPwhdvNR4JeNoYbw==
 
-"@react-native-firebase/app@^12.0.0":
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-12.0.0.tgz#52b647a8fc65695eeec89f45bcd7538d727d5864"
-  integrity sha512-ONIQUOiApnCwN/Xxnl6o9305hsuUsQaCWOp8JdlIniNM7QkkIlGqYgnvPowjEXEJVhMVME/B6NSNSidnOd/hHw==
+"@react-native-firebase/analytics@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-12.1.0.tgz#fe748c89219b992487eceaf2a3317599f93ec488"
+  integrity sha512-n9UY50JeU4In0If+g9dEhIXYL14uPclqRxNK3tnUr24tmdY6Xbv76mdIELgcd8UW7npuU4st+kppmiyrIO7Qfw==
+
+"@react-native-firebase/app@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-12.1.0.tgz#fa2c989af2bd876ed83f792c0152067184a7db27"
+  integrity sha512-goulw5PFGo2NIqqZXpv7kyv0XPKWQT2G/2ZXEFMdgDnxZGRyiAH82gR/v9rAMCww1lFVTeMZdphU5WFN/qdptg==
   dependencies:
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
@@ -3479,6 +3489,18 @@ expo-file-system@~11.0.2:
   dependencies:
     "@expo/config-plugins" "^1.0.18"
     uuid "^3.4.0"
+
+expo-firebase-analytics@~4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/expo-firebase-analytics/-/expo-firebase-analytics-4.0.2.tgz#eaf50ba06a03584b7a03bad119f6c90525f1fb6f"
+  integrity sha512-XAyzRjg+ay8TTsMh9f4sS1Jmm+JwifD1L46kMJlp4mnVu6t0LvcUyoPeSGSBPQlrLn+o4a4MBGg30uWrFqKNBw==
+  dependencies:
+    expo-firebase-core "~3.0.0"
+
+expo-firebase-core@~3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/expo-firebase-core/-/expo-firebase-core-3.0.0.tgz#cf0bee3af0fb67b1dab654bbbe1329eaf09dca82"
+  integrity sha512-cCzBl1N6cQFx98ER6rxjGkiW8OOcUHVMSciE8IRDlbJAnjGPiLBILtKr2NlvEIAYPpUzmq+CHs80WI35IOv3Uw==
 
 expo-font@~9.1.0:
   version "9.1.0"
@@ -5721,7 +5743,7 @@ promise@^8.0.3:
   dependencies:
     asap "~2.0.6"
 
-prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.6, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -5857,6 +5879,20 @@ react-native-screens@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.0.0.tgz#ee4c2d69abf7411603868b57214feec5e8f637fa"
   integrity sha512-35II5oxTaVp3OP8y0eLPOPpQkxG4fRKQ+dL1YSE1we5kCZFOU0l/Rn0T79HbyUu1LPwUZr6lZupPs0ULnRyMuQ==
+
+react-native-slider@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-native-slider/-/react-native-slider-0.11.0.tgz#b68a0bc43c8422b24cd57947cc5ac2bcdb58fadc"
+  integrity sha512-jV9K87eu9uWr0uJIyrSpBLnCKvVlOySC2wynq9TFCdV9oGgjt7Niq8Q1A8R8v+5GHsuBw/s8vEj1AAkkUi+u+w==
+  dependencies:
+    prop-types "^15.5.6"
+
+react-native-sliders@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-sliders/-/react-native-sliders-1.1.1.tgz#41c9ff45abe61d2fbcf43c2ac7923c6871dad4d6"
+  integrity sha512-OEIPw/KF/fqPSGQWAOUCoXzklF0fLlP45iKewaZxPqmyme4cdrbsNM1i+5qPbAf45mM+1MIvfT8dKjvP+aiy9w==
+  dependencies:
+    prop-types "^15.5.6"
 
 react-native-view-shot@3.1.2:
   version "3.1.2"

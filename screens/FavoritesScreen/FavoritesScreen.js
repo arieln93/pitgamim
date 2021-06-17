@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View } from 'react-native';
+import { View, I18nManager } from 'react-native';
+try { 
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 import _ from 'lodash'
 import * as DB from '../../DB'
 
@@ -15,6 +22,7 @@ const FavoritesScreen = ({ navigation, route }) => {
   const loadFavorites = () => DB.getFavoriteItems().then((favoriteItems) => setItems(favoriteItems))
   useEffect(() => {
     loadFavorites()
+    DB.sendAnalytics('opened_favorites_screen')
   }, [])
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', e => {

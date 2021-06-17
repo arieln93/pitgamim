@@ -9,12 +9,12 @@ export default {
     }),
     sliderFilter: StyleSheet.create({
         wrapper: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
             alignItems: 'center',
         },
         slider: {
-            width: '100%'
+            width: '100%',
+            margin: 0,
+            padding: 0,
         },
     }),
     fontsFilter: {
@@ -86,7 +86,7 @@ export default {
         wrapper: {
             paddingRight: 20,
             paddingLeft: 20,
-            paddingBottom: 10,
+            paddingBottom: 0,
         },
         title: {
             ...Styles.content,
@@ -108,19 +108,12 @@ export default {
             wrapper: {
                 flexDirection: 'column',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                width: '100%',
             },
             button: {
                 ...Styles.lightTitle,
                 color: Colors.PRIMARY
-            },
-            phrase: {
-                ...Styles.secondaryTitle,
-                color: Colors.PRIMARY_LIGHT
-            },
-            source: {
-                ...Styles.content,
-                color: Colors.PRIMARY_LIGHT
             },
         }),
         exportButton: StyleSheet.create({
@@ -144,5 +137,52 @@ export default {
                 height: 30,
             },
         }),
-    }
+    },
+    instructions: StyleSheet.create({
+        wrapper: {
+            width: '100%',
+            height: 300,
+            borderWidth: 10,
+            borderColor: Colors.BLACK,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 20
+        },
+        title: {
+            ...Styles.lightTitle,
+            color: Colors.PRIMARY,
+            textAlign: 'center'
+        },
+        content: {
+            ...Styles.content,
+            textAlign: 'center'
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            margin: 4,
+            tintColor: Colors.PRIMARY_LIGHT
+        },
+        buttonWrapper: {
+            margin: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingLeft: 14,
+            paddingRight: 14,
+            padding: 4,
+            borderRadius: 20,
+            backgroundColor: Colors.PRIMARY,
+        },
+        buttonText: {
+            ...Styles.metadata,
+            color: Colors.WHITE
+        },
+        buttonIcon: {
+            width: 20,
+            height: 20,
+            margin: 4,
+            tintColor: Colors.WHITE
+        }
+    })
 }

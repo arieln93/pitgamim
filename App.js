@@ -8,8 +8,14 @@ import Loading from './components/Loading/Loading'
 import * as DB from './DB'
 
 import { I18nManager } from "react-native"
-I18nManager.forceRTL(false)
-I18nManager.allowRTL(false)
+try {
+  console.log(I18nManager.isRTL)
+  I18nManager.forceRTL(false)
+  I18nManager.allowRTL(false)
+}
+catch (e) {
+  console.log(e)
+}
 
 const customFonts = {
   "Heebo-Regular" : require("./assets/fonts/Heebo-Regular.ttf"),
