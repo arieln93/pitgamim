@@ -108,13 +108,15 @@ export default {
     sharingSentence: StyleSheet.create({
       wrapper: {
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
+        justifyContent: "flex-end",
+        width: "70%",
+        margin: -30,
+        marginTop: 10,
       },
       button: {
         ...Styles.lightTitle,
         color: Colors.PRIMARY,
+        textAlign: "center",
       },
     }),
     exportButton: StyleSheet.create({
